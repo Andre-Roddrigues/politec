@@ -1,0 +1,192 @@
+{
+  "programas": [
+    {
+      "cursoId": "0329a12a-4056-4570-addc-5023c7e9e041",
+      "cursoNome": "Construção Civil",
+      "temas": [
+        "Leitura e interpretação de projetos arquitetônicos",
+        "Conceitos Fundamentais de Planejamento e Orçamento",
+        "Planejamento de Obras",
+        "Quantificação de Projetos",
+        "Apropriação de Custos e Recursos",
+        "Análise Física e Financeira",
+        "Consumo e Gestão de Materiais",
+        "Mão de Obra e Produtividade",
+        "Ferramentas e Técnicas de Controle"
+      ]
+    },
+    {
+      "cursoId": "33100209-c563-4807-8b4d-d1554d8e34bb",
+      "cursoNome": "Climatização e Refrigeração",
+      "temas": [
+        "Princípios termodinâmicos",
+        "Sistemas de refrigeração",
+        "Componentes de sistemas HVAC",
+        "Instalação e manutenção de equipamentos",
+        "Fluidos refrigerantes",
+        "Controles e automação"
+      ]
+    },
+    {
+      "cursoId": "39e09bf8-4a79-4418-ab30-32ba9ba7c643",
+      "cursoNome": "Mecânica Auto",
+      "temas": [
+        "Fundamentos da Mecânica Automotiva",
+        "Sistemas de Suspensão e Direção",
+        "Sistema de Freios",
+        "Sistema de Transmissão",
+        "Sistema Elétrico e Eletrônico",
+        "Sistema de Climatização",
+        "Diagnóstico e Planejamento de Manutenção"
+      ]
+    },
+    {
+      "cursoId": "4f0617f6-1055-443d-8eec-95d3e5bac54b",
+      "cursoNome": "Secretariado e Atendimento ao Cliente",
+      "temas": [
+        "Fundamentos do Secretariado Administrativo",
+        "Gestão de Processos Administrativos",
+        "Gestão de agenda e correspondência",
+        "Gestão de Clientes",
+        "Comunicação e Habilidades Interpessoais",
+        "Planejamento de Eventos e Gestão do Tempo",
+        "Ética e Postura Profissional",
+        "Tecnologias de Informação e Comunicação"
+      ]
+    },
+    {
+      "cursoId": "540bccd3-5a23-4464-9feb-83b10de29eb5",
+      "cursoNome": "Canalização hidráulica",
+      "temas": [
+        "Sistemas de abastecimento de água",
+        "Instalações de esgoto e águas pluviais",
+        "Materiais e ferramentas para canalização",
+        "Leitura de projetos hidráulicos",
+        "Prevenção de vazamentos",
+        "Normas técnicas e de segurança"
+      ]
+    },
+    {
+      "cursoId": "57406c6a-f1cc-46ce-8caa-94f6fc0ce9ff",
+      "cursoNome": "Eletricidade Industrial",
+      "temas": [
+        "Dispositivos de Proteção e Manobra",
+        "Tipos de Instalações Elétricas",
+        "Detecção de Avarias",
+        "Normas de segurança NR-10",
+        "Leitura de diagramas elétricos",
+        "Manutenção de sistemas elétricos"
+      ]
+    },
+    {
+      "cursoId": "61fd1c45-20b5-4150-886e-6272abbc9145",
+      "cursoNome": "Marketing e Vendas",
+      "temas": [
+        "Princípios de marketing",
+        "Comportamento do consumidor",
+        "Técnicas de vendas",
+        "Comunicação comercial",
+        "Plano de marketing",
+        "Marketing digital"
+      ]
+    },
+    {
+      "cursoId": "6aa2b36e-0f7b-4c74-a5d4-6f203f1fd8ee",
+      "cursoNome": "Gestão de Recursos Humanos",
+      "temas": [
+        "Recrutamento e seleção",
+        "Gestão de desempenho",
+        "Legislação trabalhista",
+        "Treinamento e desenvolvimento",
+        "Cargos e salários",
+        "Clima organizacional"
+      ]
+    },
+    {
+      "cursoId": "90f6cfbd-f4e1-48c5-a833-1b0e1ac05391",
+      "cursoNome": "Programação Web",
+      "temas": [
+        "HTML5 e CSS3",
+        "Fundamentos de Informática",
+        "Introdução à Programação",
+        "JavaScript e TypeScript",
+        "Programação Web: Front-End",
+        "Programação Web: Back-End",
+        "Desenvolvimento de Sites Responsivos",
+        "Versionamento com Git",
+        "Ferramentas e Tecnologias para Desenvolvimento Web",
+        "Práticas de Desenvolvimento"
+      ]
+    },
+    {
+      "cursoId": "9c781135-c635-4f7c-9e45-a71f2afc5422",
+      "cursoNome": "Inglês Prático Oral",
+      "temas": [
+        "Introduction to Spoken English",
+        "Everyday Communication",
+        "Expressing Opinions and Feelings",
+        "Speaking in Real-Life Situations",
+        "Fluency and Public Speaking"
+      ]
+    },
+    {
+      "cursoId": "b56f886c-a41e-479c-a10f-05aad723a632",
+      "cursoNome": "Informática + Excel Avançado",
+      "temas": [
+        "Sistema operacional Windows",
+        "Pacote Office",
+        "Excel: funções avançadas",
+        "Tabelas e gráficos dinâmicos",
+        "Macros e VBA",
+        "Análise de dados"
+      ]
+    },
+    {
+      "cursoId": "c568dd5f-8d0e-42c6-b0a3-3479e6d4efac",
+      "cursoNome": "Seralharia Civil",
+      "temas": [
+        "Introdução à Fabricação Metálica",
+        "Leitura de projetos de serralharia",
+        "Traçado e Marcação de Peças",
+        "Corte de Materiais Metálicos",
+        "Enformação e Conformação",
+        "Verificação e Controle de Qualidade",
+        "Saúde e Segurança no Trabalho",
+        "Procedimentos de Trabalho Manual",
+        "Soldadura em Aço (Arco Voltaico)"
+      ]
+    },
+    {
+      "cursoId": "c773c953-476e-41ef-9541-f042b7ee31b2",
+      "cursoNome": "HSST (Higiene, Segurança e Saúde no Trabalho)",
+      "temas": [
+        "Conceitos Fundamentais de HSST",
+        "Ambiente e Condições de Trabalho",
+        "Identificação e Controle de Riscos",
+        "Ergonomia e Organização do Trabalho",
+        "EPIs e EPCs",
+        "Prevenção de acidentes",
+        "Acidentes e Doenças Ocupacionais",
+        "Saúde Ocupacional",
+        "Plano de Emergência e Primeiros Socorros",
+        "Legislação e Normas Regulamentadoras (NRs)",
+        "Gestão e Cultura de Segurança"
+      ]
+    },
+    {
+      "cursoId": "ed4049cf-b063-44e9-9702-800c477a8bec",
+      "cursoNome": "Contabilidade, Fiscalidade e Auditoria",
+      "temas": [
+        "Introdução à Contabilidade",
+        "Património, Inventário e Balanço",
+        "Documentos Comerciais e Contabilização",
+        "Transações e NCRF 1 e 2",
+        "Taxas",
+        "Fiscalidade",
+        "Auditoria Interna",
+        "Software e Prática",
+        "impostos"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "quiz": [
+    {
+      "id": 1,
+      "pergunta": "Qual é a capital do Brasil?",
+      "alineas": {
+        "A": "Rio de Janeiro",
+        "B": "São Paulo",
+        "C": "Brasília",
+        "D": "Salvador"
+      },
+      "respostaCorreta": "C"
+    },
+    {
+      "id": 2,
+      "pergunta": "Quantos planetas existem no sistema solar?",
+      "alineas": {
+        "A": "7",
+        "B": "8",
+        "C": "9",
+        "D": "10"
+      },
+      "respostaCorreta": "B"
+    },
+    {
+      "id": 3,
+      "pergunta": "Quem escreveu 'Dom Casmurro'?",
+      "alineas": {
+        "A": "Machado de Assis",
+        "B": "Carlos Drummond",
+        "C": "Jorge Amado",
+        "D": "Clarice Lispector"
+      },
+      "respostaCorreta": "A"
+    },
+    {
+      "id": 4,
+      "pergunta": "Qual é o maior oceano do mundo?",
+      "alineas": {
+        "A": "Atlântico",
+        "B": "Índico",
+        "C": "Ártico",
+        "D": "Pacífico"
+      },
+      "respostaCorreta": "D"
+    },
+    {
+      "id": 5,
+      "pergunta": "Em que ano o homem pisou na Lua pela primeira vez?",
+      "alineas": {
+        "A": "1965",
+        "B": "1969",
+        "C": "1972",
+        "D": "1958"
+      },
+      "respostaCorreta": "B"
+    }
+
+  ]
+}
