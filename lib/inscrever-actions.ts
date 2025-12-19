@@ -41,7 +41,8 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
   const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
   
   // Obter token de autenticação
-  const token = (await cookies()).get("auth_token")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth_token")?.value;
 
   try {
     const response = await fetch(`${API_URL}${endpoint}`, {
@@ -92,7 +93,8 @@ export async function inscreverUsuario(data: InscricaoRequest): Promise<Inscrica
     };
 
     // Verificar se usuário está autenticado
-    const token = (await cookies()).get("auth_token")?.value;
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth_token")?.value;
     
     if (!token) {
       return {

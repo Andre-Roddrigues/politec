@@ -12,23 +12,22 @@ import {
 import { 
   inscreverUsuario, 
   type InscricaoRequest 
-} from '../../lib/inscrever-actions';
+} from '../../lib/inscrever-actions-client'; // Mude para o client wrapper
 import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface InscreverModalProps {
   isOpen: boolean;
   onClose: () => void;
   cursoId: string;
   cursoNome: string;
-  usuarioId?: string;
 }
 
 export default function InscreverModal({ 
   isOpen, 
   onClose, 
   cursoId, 
-  cursoNome,
-  usuarioId = 'usuario-demo'
+  cursoNome
 }: InscreverModalProps) {
   const [horarios, setHorarios] = useState<HorarioAPI[]>([]);
   const [loadingHorarios, setLoadingHorarios] = useState(true);
@@ -40,6 +39,7 @@ export default function InscreverModal({
     inscricaoId?: string;
     inscricaoCode?: string;
   }>({});
+  const router = useRouter();
 
   // Buscar horários quando o modal abrir
   useEffect(() => {
@@ -90,7 +90,6 @@ export default function InscreverModal({
       const inscricaoDataRequest: InscricaoRequest = {
         cursoId,
         horarioId: selectedHorarioId,
-        // Remova os outros campos se não forem necessários no backend
       };
 
       const resultado = await inscreverUsuario(inscricaoDataRequest);
@@ -102,22 +101,38 @@ export default function InscreverModal({
           inscricaoCode: resultado.inscricaoCode
         });
         toast.success(resultado.message);
+        
+        // Fechar modal após 3 segundos
+        setTimeout(() => {
+          onClose();
+        }, 3000);
       } else {
-        toast.error(resultado.message || 'Erro ao realizar inscrição');
+        // Tratar erros específicos
+        if (resultado.error?.includes('Autenticação') || resultado.error?.includes('login')) {
+          toast.error('Sessão expirada. Faça login novamente.');
+          router.push('/login');
+          onClose();
+        } else {
+          toast.error(resultado.message || 'Erro ao realizar inscrição');
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao inscrever:', error);
-      toast.error('Erro inesperado ao processar inscrição');
+      
+      if (error.message?.includes('403') || error.message?.includes('Forbidden')) {
+        toast.error('Acesso negado. Faça login novamente.');
+        router.push('/login');
+        onClose();
+      } else if (error.message?.includes('401')) {
+        toast.error('Sessão expirada. Faça login novamente.');
+        router.push('/login');
+        onClose();
+      } else {
+        toast.error('Erro inesperado ao processar inscrição');
+      }
     } finally {
       setLoadingInscricao(false);
     }
-  }
-
-  function resetForm() {
-    setSelectedHorarioId('');
-    setInscricaoSucesso(false);
-    setInscricaoData({});
-    setShowDropdown(false);
   }
 
   // Obter horário selecionado
@@ -148,7 +163,7 @@ export default function InscreverModal({
               <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-t-2xl">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {inscricaoSucesso ? 'Inscrição Confirmada!' : `Inscrever-se`}
+                    {inscricaoSucesso ? '🎉 Inscrição Confirmada!' : `Inscrever-se`}
                   </h2>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     {inscricaoSucesso 
@@ -182,18 +197,25 @@ export default function InscreverModal({
                       Parabéns! Você está inscrito
                     </h3>
                     
-                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-4">
+                    <div className="bg-gradient-to-r from-blue-50 to-brand-main/10 dark:from-blue-900/20 dark:to-brand-main/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-4">
                       <p className="font-medium text-blue-800 dark:text-blue-300">
                         {cursoNome}
                       </p>
                       {inscricaoData.inscricaoCode && (
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                          Código: <span className="font-mono font-bold">{inscricaoData.inscricaoCode}</span>
-                        </p>
+                        <div className="mt-3 p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Código de confirmação:</p>
+                          <p className="font-mono font-bold text-lg text-gray-900 dark:text-white">
+                            {inscricaoData.inscricaoCode}
+                          </p>
+                        </div>
                       )}
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-3">
+                        Enviaremos um email com os detalhes da inscrição.
+                      </p>
                     </div>
                     
-                    <div className="animate-pulse text-xs text-blue-600 dark:text-blue-400">
+                    <div className="animate-pulse text-xs text-blue-600 dark:text-blue-400 flex items-center justify-center gap-2">
+                      <Loader2 className="w-3 h-3 animate-spin" />
                       Fechando automaticamente...
                     </div>
                   </div>
