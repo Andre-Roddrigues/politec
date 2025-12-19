@@ -11,8 +11,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Graduação Unitec",
-  description: "Guia para preencher seu currículo na Unitec, incluindo informações pessoais, formação acadêmica e experiências relevantes para a graduação.",
+  title: "POLITEC",
+  // description: "Guia para preencher seu currículo na Unitec, incluindo informações pessoais, formação acadêmica e experiências relevantes para a graduação.",
 };
 
 export default function RootLayout({

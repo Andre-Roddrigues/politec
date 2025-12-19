@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Moon, Sun, Menu, X, Briefcase, GraduationCap, Info, User, FileText, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "/public/images/prometlogo.png";
+import logo from "/public/images/logo.png";
 import Image from "next/image";
 import LogoutButton from "../../common/LogoutButton";
 
@@ -16,9 +16,9 @@ const Navbar = () => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   const menuItems = [
-    // { name: "Início", href: "/", icon: Briefcase },
+    { name: "Início", href: "/", icon: Briefcase },
     // { name: "Sobre", href: "/#sobre", icon: Briefcase },
-    // { name: "Áreas de Formação", href: "/cursos", icon: GraduationCap  },
+    { name: "Cursos", href: "/cursos", icon: GraduationCap  },
     // { name: "Como Funciona", href: "/#funcionamento", icon: Info  },
     // { name: "Benefícios", href: "/#beneficios", icon: Briefcase },
     { name: "", href: "/#contacto", icon: Briefcase },
@@ -95,7 +95,7 @@ const Navbar = () => {
           href="/"
           className="text-2xl font-bold text-brand-main dark:text-brand-lime flex items-center"
         >
-          {/* <Image src={logo} alt="PROMET" width={50} height={50} /> */}
+          <Image src="/images/logo.png" alt="POLITEC" width={50} height={50} />
         </Link>
 
         {/* Links desktop */}
