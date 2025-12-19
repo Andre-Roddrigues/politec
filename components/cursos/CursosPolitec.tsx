@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { getCursos, getAreas, getModalidades, getNiveis, type Curso } from '../../lib/cursos-actions';
 import InscreverModal from './InscreverModal';
+import { useRouter } from 'next/navigation';
+import { getCookie } from 'cookies-next';
 
 export default function CursosPolitec() {
     const [cursos, setCursos] = useState<Curso[]>([]);
@@ -19,6 +21,8 @@ export default function CursosPolitec() {
     const [showFilters, setShowFilters] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedCurso, setSelectedCurso] = useState<{ id: string, nome: string } | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const router = useRouter();
 
     // Filtros
     const [filtros, setFiltros] = useState({
@@ -28,6 +32,11 @@ export default function CursosPolitec() {
         modalidade: '',
         inscricoesAbertas: true,
     });
+
+    // Verificar autenticação
+    useEffect(() => {
+        checkAuth();
+    }, []);
 
     // Carregar dados iniciais
     useEffect(() => {
@@ -42,6 +51,12 @@ export default function CursosPolitec() {
 
         return () => clearTimeout(timer);
     }, [filtros]);
+
+    function checkAuth() {
+        // Verificar se existe token no cookie
+        const token = getCookie('token'); // ou o nome do seu cookie
+        setIsAuthenticated(!!token);
+    }
 
     async function loadData() {
         try {
@@ -64,9 +79,21 @@ export default function CursosPolitec() {
     }
 
     function handleInscreverClick(cursoId: string, cursoNome: string) {
-  setSelectedCurso({ id: cursoId, nome: cursoNome });
-  setModalOpen(true);
-}
+        if (!isAuthenticated) {
+            // Armazenar o curso selecionado para redirecionamento após login
+            sessionStorage.setItem('redirectAfterLogin', `/cursos/${cursoId}`);
+            sessionStorage.setItem('selectedCurso', JSON.stringify({ id: cursoId, nome: cursoNome }));
+            
+            // Redirecionar para login
+            router.push('/login');
+            return;
+        }
+        
+        // Se autenticado, abrir modal normalmente
+        setSelectedCurso({ id: cursoId, nome: cursoNome });
+        setModalOpen(true);
+    }
+
     async function applyFilters() {
         setLoading(true);
         try {
@@ -151,6 +178,22 @@ export default function CursosPolitec() {
                     <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                         Descubra todos os cursos disponíveis e encontre a formação ideal para sua carreira.
                     </p>
+                    
+                    {/* Aviso de Login */}
+                    {!isAuthenticated && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg"
+                        >
+                            <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            <span className="text-sm text-yellow-700 dark:text-yellow-300">
+                                Faça login para se inscrever nos cursos
+                            </span>
+                        </motion.div>
+                    )}
                 </motion.div>
 
                 {/* Filtros e Busca */}
@@ -392,9 +435,9 @@ export default function CursosPolitec() {
                                             </div>
 
                                             {/* <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                        <Users className="w-4 h-4" />
-                        <span>{curso.vagas} vagas disponíveis</span>
-                      </div> */}
+                                                <Users className="w-4 h-4" />
+                                                <span>{curso.vagas} vagas disponíveis</span>
+                                            </div> */}
 
                                             <div className="flex items-center gap-2 text-sm">
                                                 <DollarSign className={`w-4 h-4 ${curso.gratuito ? 'text-green-500' : 'text-gray-600 dark:text-gray-400'}`} />
@@ -405,9 +448,9 @@ export default function CursosPolitec() {
 
                                             {/* Data de atualização */}
                                             {/* <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-500 mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-                        <Calendar className="w-3 h-3" />
-                        <span>Atualizado em {formatarData(curso.updatedAt)}</span>
-                      </div> */}
+                                                <Calendar className="w-3 h-3" />
+                                                <span>Atualizado em {formatarData(curso.updatedAt)}</span>
+                                            </div> */}
                                         </div>
                                     </div>
 
@@ -422,11 +465,14 @@ export default function CursosPolitec() {
                                                 onClick={() => handleInscreverClick(curso.id, curso.titulo)}
                                                 disabled={!curso.inscricoesAbertas}
                                                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${curso.inscricoesAbertas
-                                                    ? 'bg-gradient-to-r from-blue-600 to-brand-main hover:from-blue-700 hover:to-brand-main/90 text-white shadow-sm hover:shadow hover:scale-105'
+                                                    ? isAuthenticated 
+                                                        ? 'bg-gradient-to-r from-blue-600 to-brand-main hover:from-blue-700 hover:to-brand-main/90 text-white shadow-sm hover:shadow hover:scale-105'
+                                                        : 'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white shadow-sm hover:shadow cursor-pointer'
                                                     : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                                                     }`}
                                             >
-                                                {curso.inscricoesAbertas ? 'Inscrever-se' : 'Em breve'}
+                                                {!isAuthenticated && curso.inscricoesAbertas ? 'Login para inscrever' : 
+                                                 curso.inscricoesAbertas ? 'Inscrever-se' : 'Em breve'}
                                             </button>
                                         </div>
                                     </div>
@@ -458,16 +504,20 @@ export default function CursosPolitec() {
                     </div>
                 </motion.div>
             </div>
-            <InscreverModal
-                isOpen={modalOpen}
-                onClose={() => {
-                    setModalOpen(false);
-                    setSelectedCurso(null);
-                }}
-                cursoId={selectedCurso?.id || ''}
-                cursoNome={selectedCurso?.nome || ''}
-                usuarioId="" // Em produção, pegar do auth
-            />
+
+            {/* Modal de Inscrição - Só renderiza se autenticado */}
+            {isAuthenticated && selectedCurso && (
+                <InscreverModal
+                    isOpen={modalOpen}
+                    onClose={() => {
+                        setModalOpen(false);
+                        setSelectedCurso(null);
+                    }}
+                    cursoId={selectedCurso.id}
+                    cursoNome={selectedCurso.nome}
+                    usuarioId="" // Em produção, pegar do auth
+                />
+            )}
         </div>
     );
 }
