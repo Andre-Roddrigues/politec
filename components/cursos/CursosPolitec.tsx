@@ -361,9 +361,9 @@ export default function CursosPolitec() {
                                     <div className="p-6">
                                         <div className="flex justify-between items-start mb-4">
                                             <div>
-                                                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getBadgeColor(curso.nivel)}`}>
+                                                {/* <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getBadgeColor(curso.nivel)}`}>
                                                     {curso.nivel}
-                                                </span>
+                                                </span> */}
                                                 {curso.gratuito && (
                                                     <span className="inline-block ml-2 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                                         Gratuito
