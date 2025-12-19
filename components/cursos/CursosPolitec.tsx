@@ -83,12 +83,12 @@ export default function CursosPolitec() {
             // Armazenar o curso selecionado para redirecionamento após login
             sessionStorage.setItem('redirectAfterLogin', `/cursos/${cursoId}`);
             sessionStorage.setItem('selectedCurso', JSON.stringify({ id: cursoId, nome: cursoNome }));
-            
+
             // Redirecionar para login
             router.push('/login');
             return;
         }
-        
+
         // Se autenticado, abrir modal normalmente
         setSelectedCurso({ id: cursoId, nome: cursoNome });
         setModalOpen(true);
@@ -178,7 +178,7 @@ export default function CursosPolitec() {
                     <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                         Descubra todos os cursos disponíveis e encontre a formação ideal para sua carreira.
                     </p>
-                    
+
                     {/* Aviso de Login */}
                     {!isAuthenticated && (
                         <motion.div
@@ -406,7 +406,7 @@ export default function CursosPolitec() {
                                             <div>
                                                 <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                                                     CV3 | CV4 | CV5
-                                                </span> 
+                                                </span>
                                                 {curso.gratuito && (
                                                     <span className="inline-block ml-2 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                                         Gratuito
@@ -420,7 +420,7 @@ export default function CursosPolitec() {
                                         </div>
 
                                         {/* Título e Descrição */}
-                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate-1-line">
                                             {curso.titulo}
                                         </h3>
                                         <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 line-clamp-3">
@@ -465,14 +465,14 @@ export default function CursosPolitec() {
                                                 onClick={() => handleInscreverClick(curso.id, curso.titulo)}
                                                 disabled={!curso.inscricoesAbertas}
                                                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${curso.inscricoesAbertas
-                                                    ? isAuthenticated 
+                                                    ? isAuthenticated
                                                         ? 'bg-gradient-to-r from-blue-600 to-brand-main hover:from-blue-700 hover:to-brand-main/90 text-white shadow-sm hover:shadow hover:scale-105'
                                                         : 'bg-gradient-to-r from-blue-600 to-brand-main hover:from-blue-700 hover:to-brand-main/90 text-white shadow-sm hover:shadow hover:scale-105'
                                                     : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                                                     }`}
                                             >
-                                                {!isAuthenticated && curso.inscricoesAbertas ? 'Inscrever-se' : 
-                                                 curso.inscricoesAbertas ? 'Inscrever-se' : 'Em breve'}
+                                                {!isAuthenticated && curso.inscricoesAbertas ? 'Inscrever-se' :
+                                                    curso.inscricoesAbertas ? 'Inscrever-se' : 'Em breve'}
                                             </button>
                                         </div>
                                     </div>
@@ -515,7 +515,7 @@ export default function CursosPolitec() {
                     }}
                     cursoId={selectedCurso.id}
                     cursoNome={selectedCurso.nome}
-                    
+
                 />
             )}
         </div>
