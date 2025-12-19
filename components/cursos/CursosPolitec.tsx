@@ -54,7 +54,7 @@ export default function CursosPolitec() {
 
     function checkAuth() {
         // Verificar se existe token no cookie
-        const token = getCookie('token'); // ou o nome do seu cookie
+        const token = getCookie('auth_token'); // ou o nome do seu cookie
         setIsAuthenticated(!!token);
     }
 
