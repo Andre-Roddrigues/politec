@@ -7,7 +7,6 @@ export async function registerUser(userData: {
   apelido: string;
   email: string;
   provincia: string;
-  username: string;
   password: string;
 }) {
   try {

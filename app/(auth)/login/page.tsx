@@ -81,7 +81,7 @@ const router = useRouter()
         }}
       />
       
-      <div className="min-h-[90vh] flex items-center justify-center p-4 bg-slate-50 dark:bg-gray-700">
+      <div className="min-h-[90vh] flex items-center justify-center p-4 py-8 bg-slate-50 dark:bg-gray-700">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

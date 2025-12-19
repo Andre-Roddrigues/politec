@@ -39,7 +39,7 @@ export default function RootLayout({
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
       <body className={`h-full text-white${outfit.className} dark:bg-gray-900`}>
         {/* <ThemeProvider> */}
-          <div className="sticky top-0 mb-[75px] z-50 bg-white dark:bg-gray-800 shadow-md">
+          <div className="sticky top-0 mb-[60px] z-50 bg-white dark:bg-gray-800 shadow-md">
           <Navbar />
           </div>
           <SidebarProvider>{children}</SidebarProvider>
