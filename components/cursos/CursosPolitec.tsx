@@ -483,7 +483,7 @@ export default function CursosPolitec() {
                 </motion.div>
 
                 {/* Footer Info */}
-                <motion.div
+                {/* <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
@@ -502,7 +502,7 @@ export default function CursosPolitec() {
                             Falar com orientador
                         </button>
                     </div>
-                </motion.div>
+                </motion.div> */}
             </div>
 
             {/* Modal de Inscrição - Só renderiza se autenticado */}

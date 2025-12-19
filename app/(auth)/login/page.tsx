@@ -41,11 +41,11 @@ const router = useRouter()
 
   // redireciona após 1.5s para garantir
   setTimeout(() => {
-    router.replace("/user/perfil");
+    router.replace("/cursos");
     // fallback se o router falhar
     setTimeout(() => {
-      if (window.location.pathname !== "/user/perfil") {
-        window.location.href = "/user/perfil";
+      if (window.location.pathname !== "/cursos") {
+        window.location.href = "/cursos";
       }
     }, 500);
   }, 1000);
@@ -172,7 +172,7 @@ const router = useRouter()
                   </div>
                 )}
               </motion.button>
-
+{/* 
               <div className="relative flex items-center justify-center my-4">
                 <div className="border-t border-gray-200 w-full"></div>
                 <span className="bg-white  text-xs text-gray-500">ou</span>
@@ -181,7 +181,7 @@ const router = useRouter()
 
               <div className="flex items-center justify-center w-full">
                 <GoogleLoginButton/>
-              </div>
+              </div> */}
             
             </form>
 
@@ -206,9 +206,9 @@ const router = useRouter()
             />
             <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
               <div className="max-w-xs">
-                <h2 className="text-lg font-bold mb-2">Junte-se à Nossa Comunidade</h2>
+                <h2 className="text-lg font-bold mb-2">Junte-se à POLITEC</h2>
                 <p className="text-white/90 text-sm">
-                  Faça parte de uma plataforma inovadora com oportunidades únicas.
+                  Faça parte de uma instituição.
                 </p>
               </div>
             </div>
