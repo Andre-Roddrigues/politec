@@ -106,7 +106,7 @@ export async function inscreverUsuario(data: InscricaoRequest): Promise<Inscrica
 
     // Enviar para API real
     const response = await fetchAPI('/users/inscrever-se', {
-      method: 'PUT',
+      method: 'POST',
       body: JSON.stringify(inscricaoAPIRequest),
     });
 

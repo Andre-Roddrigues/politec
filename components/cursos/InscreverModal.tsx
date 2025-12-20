@@ -105,7 +105,7 @@ export default function InscreverModal({
         // Fechar modal após 3 segundos
         setTimeout(() => {
           onClose();
-        }, 3000);
+        }, 5000);
       } else {
         // Tratar erros específicos
         if (resultado.error?.includes('Autenticação') || resultado.error?.includes('login')) {
@@ -163,7 +163,7 @@ export default function InscreverModal({
               <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-t-2xl">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {inscricaoSucesso ? '🎉 Inscrição Confirmada!' : `Inscrever-se`}
+                    {inscricaoSucesso ? 'Inscrição Confirmada!' : `Inscrever-se`}
                   </h2>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     {inscricaoSucesso 

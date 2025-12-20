@@ -420,9 +420,16 @@ export default function CursosPolitec() {
                                         </div>
 
                                         {/* Título e Descrição */}
-                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate-1-line">
+                                        <h3
+                                            title={curso.titulo}
+                                            className="text-xl font-bold text-gray-900 dark:text-white mb-3
+             group-hover:text-blue-600 dark:group-hover:text-blue-400
+             transition-colors truncate cursor-help"
+                                        >
                                             {curso.titulo}
                                         </h3>
+
+
                                         <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 line-clamp-3">
                                             {curso.descricao}
                                         </p>
@@ -440,8 +447,8 @@ export default function CursosPolitec() {
                                             </div> */}
 
                                             <div className="flex items-center gap-2 text-sm">
-                                                <DollarSign className={`w-4 h-4 ${curso.gratuito ? 'text-green-500' : 'text-gray-600 dark:text-gray-400'}`} />
-                                                <span className={`font-semibold ${curso.gratuito ? 'text-green-600 dark:text-green-400' : 'text-gray-900 dark:text-white'}`}>
+                                                <DollarSign className={`w-4 h-4 uppercase ${curso.gratuito ? 'text-green-500' : 'text-gray-600 dark:text-gray-400'}`} />
+                                                <span className={`font-semibold ${curso.gratuito ? 'text-green-600 dark:text-green-400 uppercase' : 'text-gray-900 uppercase dark:text-white'}`}>
                                                     {curso.gratuito ? 'Gratuito' : curso.preco}
                                                 </span>
                                             </div>

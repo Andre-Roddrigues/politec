@@ -65,7 +65,7 @@ export default function HeroPolitec() {
               <div className="relative w-full aspect-square rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
                 {/* Replace this with your actual image path */}
                 <Image
-                  src="/images/logo.png" // Atualize com o caminho da sua imagem
+                  src="/images/politeclogo.png" // Atualize com o caminho da sua imagem
                   alt="Estudantes da Politec em sala de aula"
                   fill
                   className="object-cover"
