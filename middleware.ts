@@ -37,7 +37,7 @@ export function middleware(req: NextRequest) {
 
   // Se usuário já logado tentar ir para login/registro → manda para perfil
   if (token && authRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL("/user/perfil", req.url));
+    return NextResponse.redirect(new URL("/cursos", req.url));
   }
 
   // Se rota pública → libera
