@@ -40,7 +40,7 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
   try {
     console.log(`[API] Fazendo requisição para: ${API_URL}${endpoint}`);
     
-    const response = await fetch(`${API_URL}${endpoint}`, {
+    const response = await fetch(`https://backend-politec.unitec.ac.mz/cursos`, {
       ...options,
       signal: controller.signal,
       headers: {
