@@ -176,7 +176,7 @@ export default function CursosPolitec() {
                         </h1>
                     </div>
                     <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                        Descubra todos os cursos disponíveis e encontre a formação ideal para sua carreira.
+                        Descubra os cursos médios disponíveis e encontre a formação ideal para sua carreira.
                     </p>
 
                     {/* Aviso de Login */}
