@@ -19,8 +19,8 @@ export type Curso = {
   duracao: string;
   nivel: 'Técnico' | 'Superior' | 'Pós-Graduação' | 'Curta Duração';
   area: string;
-  preco: string; // Mantendo como string para exibir "3600mt"
-  vagas: number; // Valor padrão
+  preco: string;
+  vagas: number;
   gratuito: boolean;
   modalidade: 'Presencial' | 'Online' | 'Híbrido';
   inscricoesAbertas: boolean;
@@ -30,7 +30,7 @@ export type Curso = {
 
 // Configuração da API
 const API_URL = 'https://backend-politec.unitec.ac.mz';
-const API_TIMEOUT = 10000; // 10 segundos
+const API_TIMEOUT = 15000; // Aumentado para 15 segundos
 
 // Função auxiliar para fazer requisições
 async function fetchAPI(endpoint: string, options?: RequestInit) {
@@ -38,6 +38,8 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
   const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
 
   try {
+    console.log(`[API] Fazendo requisição para: ${API_URL}${endpoint}`);
+    
     const response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
       signal: controller.signal,
@@ -45,23 +47,29 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
         'Content-Type': 'application/json',
         ...options?.headers,
       },
-      cache: 'no-store', // Desativa cache para dados sempre atualizados
+      cache: 'no-store',
     });
 
     clearTimeout(timeoutId);
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[API] Erro ${response.status}: ${errorText}`);
       throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log(`[API] Resposta recebida de: ${endpoint}`, data ? `Com ${Array.isArray(data) ? data.length : 1} itens` : 'Vazia');
+    return data;
   } catch (error) {
     clearTimeout(timeoutId);
     
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error('Timeout: A requisição demorou muito para responder');
+      console.error('[API] Timeout: A requisição demorou muito para responder');
+      throw new Error('Timeout: A requisição demorou muito para responder. Tente novamente.');
     }
     
+    console.error('[API] Erro na requisição:', error);
     throw error;
   }
 }
@@ -82,7 +90,6 @@ function detectarNivel(cursoNome: string): Curso['nivel'] {
     return 'Pós-Graduação';
   }
   
-  // Cursos curtos por padrão
   return 'Curta Duração';
 }
 
@@ -110,6 +117,14 @@ function detectarArea(cursoNome: string, descricao: string): string {
     return 'Educação';
   }
   
+  if (texto.includes('minas') || texto.includes('geologia') || texto.includes('petróleo')) {
+    return 'Minas e Geologia';
+  }
+  
+  if (texto.includes('eletro') || texto.includes('mecânica') || texto.includes('automóveis')) {
+    return 'Engenharia';
+  }
+  
   return 'Outras';
 }
 
@@ -118,19 +133,37 @@ function formatarCursoAPI(cursoAPI: CursoAPI): Curso {
   const nivel = detectarNivel(cursoAPI.nome);
   const area = detectarArea(cursoAPI.nome, cursoAPI.descricao);
   
-  // Verifica se é gratuito (contém "mt" na mensalidade ou valor 0)
+  // Verifica se é gratuito
+  const mensalidadeLower = cursoAPI.mensalidade.toLowerCase();
   const mensalidadeNum = parseInt(cursoAPI.mensalidade.replace(/\D/g, ''));
-  const gratuito = mensalidadeNum === 0 || cursoAPI.mensalidade.toLowerCase().includes('gratuito');
+  const gratuito = mensalidadeNum === 0 || 
+                   mensalidadeLower.includes('gratuito') || 
+                   mensalidadeLower.includes('livre');
   
-  // Padrão: Presencial (ajustar conforme necessidade)
-  const modalidade: 'Presencial' | 'Online' | 'Híbrido' = 'Presencial';
+  // Determinar modalidade baseada na descrição
+  const descricaoLower = cursoAPI.descricao.toLowerCase();
+  let modalidade: 'Presencial' | 'Online' | 'Híbrido' = 'Presencial';
+  if (descricaoLower.includes('online') || descricaoLower.includes('remoto') || descricaoLower.includes('virtual')) {
+    modalidade = 'Online';
+  } else if (descricaoLower.includes('híbrido') || descricaoLower.includes('hibrido') || descricaoLower.includes('semi-presencial')) {
+    modalidade = 'Híbrido';
+  }
   
-  // Padrão: Inscrições abertas (baseado na data)
+  // Determinar se inscrições estão abertas
+  // Baseado na data de criação e atualização
   const dataAtual = new Date();
   const dataCriacao = new Date(cursoAPI.createdAt);
-  const mesesDesdeCriacao = (dataAtual.getTime() - dataCriacao.getTime()) / (1000 * 60 * 60 * 24 * 30);
-  const inscricoesAbertas = mesesDesdeCriacao < 6; // Considera inscrições abertas por 6 meses
+  const dataAtualizacao = new Date(cursoAPI.updatedAt);
+  const mesesDesdeAtualizacao = (dataAtual.getTime() - dataAtualizacao.getTime()) / (1000 * 60 * 60 * 24 * 30);
+  const inscricoesAbertas = mesesDesdeAtualizacao < 6; // Considera cursos atualizados nos últimos 6 meses como ativos
   
+  // Estimar vagas baseado no tipo de curso
+  let vagas = 30; // Valor padrão
+  if (nivel === 'Técnico') vagas = 40;
+  if (nivel === 'Superior') vagas = 35;
+  if (nivel === 'Pós-Graduação') vagas = 25;
+  if (nivel === 'Curta Duração') vagas = 50;
+
   return {
     id: cursoAPI.id,
     titulo: cursoAPI.nome,
@@ -139,7 +172,7 @@ function formatarCursoAPI(cursoAPI: CursoAPI): Curso {
     nivel,
     area,
     preco: cursoAPI.mensalidade,
-    vagas: 30, // Valor padrão - ajuste conforme sua API
+    vagas,
     gratuito,
     modalidade,
     inscricoesAbertas,
@@ -148,7 +181,7 @@ function formatarCursoAPI(cursoAPI: CursoAPI): Curso {
   };
 }
 
-// Função principal para buscar cursos
+// Função principal para buscar cursos - SEM MOCK DATA
 export async function getCursos(filtros?: {
   nivel?: string;
   area?: string;
@@ -157,29 +190,45 @@ export async function getCursos(filtros?: {
   busca?: string;
 }): Promise<Curso[]> {
   try {
+    console.log('[getCursos] Iniciando busca de cursos da API...');
+    
     // Buscar dados da API
-    const cursosAPI: CursoAPI[] = await fetchAPI('/cursos');
+    const cursosAPI: CursoAPI[] = await fetchAPI('https://backend-politec.unitec.ac.mz/cursos');
+    
+    if (!cursosAPI || cursosAPI.length === 0) {
+      console.warn('[getCursos] API retornou array vazio ou nulo');
+      return [];
+    }
+    
+    console.log(`[getCursos] ${cursosAPI.length} cursos recebidos da API`);
     
     // Formatando dados
-    const cursosFormatados = cursosAPI.map(formatarCursoAPI);
+    const cursosFormatados = cursosAPI.map(curso => {
+      console.log(`[getCursos] Formatando curso: ${curso.nome}`);
+      return formatarCursoAPI(curso);
+    });
     
     // Aplicar filtros se fornecidos
     let cursosFiltrados = [...cursosFormatados];
     
     if (filtros?.nivel) {
       cursosFiltrados = cursosFiltrados.filter(curso => curso.nivel === filtros.nivel);
+      console.log(`[getCursos] Após filtro de nível "${filtros.nivel}": ${cursosFiltrados.length} cursos`);
     }
     
     if (filtros?.area) {
       cursosFiltrados = cursosFiltrados.filter(curso => curso.area === filtros.area);
+      console.log(`[getCursos] Após filtro de área "${filtros.area}": ${cursosFiltrados.length} cursos`);
     }
     
     if (filtros?.modalidade) {
       cursosFiltrados = cursosFiltrados.filter(curso => curso.modalidade === filtros.modalidade);
+      console.log(`[getCursos] Após filtro de modalidade "${filtros.modalidade}": ${cursosFiltrados.length} cursos`);
     }
     
     if (filtros?.inscricoesAbertas !== undefined) {
       cursosFiltrados = cursosFiltrados.filter(curso => curso.inscricoesAbertas === filtros.inscricoesAbertas);
+      console.log(`[getCursos] Após filtro de inscrições abertas "${filtros.inscricoesAbertas}": ${cursosFiltrados.length} cursos`);
     }
     
     if (filtros?.busca) {
@@ -189,92 +238,18 @@ export async function getCursos(filtros?: {
         curso.descricao.toLowerCase().includes(buscaLower) ||
         curso.area.toLowerCase().includes(buscaLower)
       );
+      console.log(`[getCursos] Após filtro de busca "${filtros.busca}": ${cursosFiltrados.length} cursos`);
     }
     
+    console.log(`[getCursos] Retornando ${cursosFiltrados.length} cursos filtrados`);
     return cursosFiltrados;
+    
   } catch (error) {
-    console.error('Erro ao buscar cursos:', error);
+    console.error('[getCursos] Erro ao buscar cursos:', error);
     
-    // Fallback: dados de exemplo em caso de erro na API
-    console.log('Usando dados de exemplo devido a erro na API');
-    
-    const cursosExemploFormatados: Curso[] = [
-      {
-        id: '1',
-        titulo: 'Canalização',
-        descricao: 'Cursos de Construção Civil',
-        duracao: '3-Anos + Estágio',
-        nivel: 'Técnico',
-        area: 'Construção Civil',
-        preco: '3600mt',
-        vagas: 25,
-        gratuito: false,
-        modalidade: 'Presencial',
-        inscricoesAbertas: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: '2',
-        titulo: 'Informática',
-        descricao: 'Curso de informática básica e avançada',
-        duracao: '2 anos',
-        nivel: 'Técnico',
-        area: 'Tecnologia',
-        preco: '2500mt',
-        vagas: 40,
-        gratuito: false,
-        modalidade: 'Presencial',
-        inscricoesAbertas: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: '3',
-        titulo: 'Enfermagem',
-        descricao: 'Formação técnica em enfermagem',
-        duracao: '3 anos',
-        nivel: 'Técnico',
-        area: 'Saúde',
-        preco: '4000mt',
-        vagas: 30,
-        gratuito: false,
-        modalidade: 'Presencial',
-        inscricoesAbertas: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ];
-    
-    // Aplicar filtros nos dados de exemplo
-    let cursosFiltrados = [...cursosExemploFormatados];
-    
-    if (filtros?.nivel) {
-      cursosFiltrados = cursosFiltrados.filter(curso => curso.nivel === filtros.nivel);
-    }
-    
-    if (filtros?.area) {
-      cursosFiltrados = cursosFiltrados.filter(curso => curso.area === filtros.area);
-    }
-    
-    if (filtros?.modalidade) {
-      cursosFiltrados = cursosFiltrados.filter(curso => curso.modalidade === filtros.modalidade);
-    }
-    
-    if (filtros?.inscricoesAbertas !== undefined) {
-      cursosFiltrados = cursosFiltrados.filter(curso => curso.inscricoesAbertas === filtros.inscricoesAbertas);
-    }
-    
-    if (filtros?.busca) {
-      const buscaLower = filtros.busca.toLowerCase();
-      cursosFiltrados = cursosFiltrados.filter(curso =>
-        curso.titulo.toLowerCase().includes(buscaLower) ||
-        curso.descricao.toLowerCase().includes(buscaLower) ||
-        curso.area.toLowerCase().includes(buscaLower)
-      );
-    }
-    
-    return cursosFiltrados;
+    // RETORNA APENAS ARRAY VAZIO EM CASO DE ERRO - SEM MOCK DATA
+    console.log('[getCursos] Retornando array vazio devido a erro na API');
+    return [];
   }
 }
 
@@ -282,40 +257,66 @@ export async function getCursos(filtros?: {
 export async function getAreas(): Promise<string[]> {
   try {
     const cursos = await getCursos();
+    if (cursos.length === 0) {
+      return [];
+    }
     return Array.from(new Set(cursos.map(curso => curso.area))).sort();
   } catch (error) {
     console.error('Erro ao buscar áreas:', error);
-    return ['Construção Civil', 'Tecnologia', 'Saúde', 'Gestão', 'Educação', 'Outras'];
+    return []; // Retorna array vazio em vez de mock data
   }
 }
 
 export async function getModalidades(): Promise<string[]> {
   try {
     const cursos = await getCursos();
+    if (cursos.length === 0) {
+      return [];
+    }
     return Array.from(new Set(cursos.map(curso => curso.modalidade))).sort();
   } catch (error) {
     console.error('Erro ao buscar modalidades:', error);
-    return ['Presencial', 'Online', 'Híbrido'];
+    return []; // Retorna array vazio em vez de mock data
   }
 }
 
 export async function getNiveis(): Promise<string[]> {
   try {
     const cursos = await getCursos();
+    if (cursos.length === 0) {
+      return [];
+    }
     return Array.from(new Set(cursos.map(curso => curso.nivel))).sort();
   } catch (error) {
     console.error('Erro ao buscar níveis:', error);
-    return ['Técnico', 'Superior', 'Pós-Graduação', 'Curta Duração'];
+    return []; // Retorna array vazio em vez de mock data
   }
 }
 
 // Função para buscar um curso específico por ID
 export async function getCursoById(id: string): Promise<Curso | null> {
   try {
+    // Tentar buscar diretamente da API primeiro
+    console.log(`[getCursoById] Buscando curso com ID: ${id}`);
+    
+    // Se a API tiver endpoint específico por ID, use:
+    // const cursoAPI: CursoAPI = await fetchAPI(`/cursos/${id}`);
+    // return formatarCursoAPI(cursoAPI);
+    
+    // Como alternativa, buscar todos e filtrar
     const cursos = await getCursos();
-    return cursos.find(curso => curso.id === id) || null;
+    const cursoEncontrado = cursos.find(curso => curso.id === id);
+    
+    if (cursoEncontrado) {
+      console.log(`[getCursoById] Curso encontrado: ${cursoEncontrado.titulo}`);
+      return cursoEncontrado;
+    }
+    
+    console.log(`[getCursoById] Curso com ID ${id} não encontrado`);
+    return null;
+    
   } catch (error) {
     console.error(`Erro ao buscar curso com ID ${id}:`, error);
-    return null;
+    return null; // Retorna null em vez de mock data
   }
 }

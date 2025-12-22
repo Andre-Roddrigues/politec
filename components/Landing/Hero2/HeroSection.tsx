@@ -66,7 +66,7 @@ export default function HeroPolitec() {
                 {/* Replace this with your actual image path */}
                 <Image
                   src="/images/politeclogo.png" // Atualize com o caminho da sua imagem
-                  alt="Estudantes da Politec em sala de aula"
+                  alt="POLITEC"
                   fill
                   className="object-cover"
                   priority
