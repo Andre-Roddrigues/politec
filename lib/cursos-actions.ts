@@ -17,7 +17,7 @@ export type Curso = {
   titulo: string;
   descricao: string;
   duracao: string;
-  nivel: 'Técnico' | 'Superior' | 'Pós-Graduação' | 'Curta Duração';
+  nivel: 'Técnico' | 'Superior' | 'Pós-Graduação' | 'Médio';
   area: string;
   preco: string;
   vagas: number;
@@ -90,7 +90,7 @@ function detectarNivel(cursoNome: string): Curso['nivel'] {
     return 'Pós-Graduação';
   }
   
-  return 'Curta Duração';
+  return 'Médio';
 }
 
 // Função para detectar área baseada no nome ou descrição
@@ -162,7 +162,7 @@ function formatarCursoAPI(cursoAPI: CursoAPI): Curso {
   if (nivel === 'Técnico') vagas = 40;
   if (nivel === 'Superior') vagas = 35;
   if (nivel === 'Pós-Graduação') vagas = 25;
-  if (nivel === 'Curta Duração') vagas = 50;
+  if (nivel === 'Médio') vagas = 50;
 
   return {
     id: cursoAPI.id,

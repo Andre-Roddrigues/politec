@@ -127,8 +127,8 @@ export default function DigitalPayment({
               type="tel"
               value={phone}
               onChange={handlePhoneChange}
-              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 pl-10"
-              placeholder="84/841234567"
+              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 pl-12"
+              placeholder="84/85"
               required
               pattern="(84|85)\/\d{7}"
               title="Formato: 84/841234567 ou 85/851234567"
@@ -137,9 +137,9 @@ export default function DigitalPayment({
               +258
             </div>
           </div>
-          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          {/* <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
             Formato: 84/841234567 ou 85/851234567 (9 dígitos no total)
-          </div>
+          </div> */}
         </div>
 
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
@@ -150,7 +150,7 @@ export default function DigitalPayment({
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600 dark:text-gray-400">Total a pagar</span>
-              <span className="text-xl font-bold text-gray-900 dark:text-white">
+              <span className="text-xl font-bold text-brand-lime dark:text-white">
                 {valor.toLocaleString("pt-MZ")} MT
               </span>
             </div>
@@ -170,7 +170,7 @@ export default function DigitalPayment({
         <button
           type="submit"
           disabled={loading || !isValidPhone}
-          className="w-full py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-medium hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
+          className="w-full py-3 bg-gradient-to-r from-brad-main to-brand-lime text-white rounded-lg font-medium hover:from-brand-main/80 hover:to-brand-lime/80 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
         >
           {loading ? (
             <>

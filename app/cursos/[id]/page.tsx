@@ -355,10 +355,10 @@ export default function CursoDetailPage() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                       <Users className="w-4 h-4" />
-                      <span className="text-sm">Vagas</span>
+                      <span className="text-sm">Nível</span>
                     </div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                      {curso.vagas || "Disponível"}
+                      {curso.nivel || "Médio"}
                     </div>
                   </div>
 
@@ -368,17 +368,18 @@ export default function CursoDetailPage() {
                       <span className="text-sm">Início</span>
                     </div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                      {new Date(curso.dataInicio).toLocaleDateString("pt-MZ")}
+                      {/* {new Date(curso.dataInicio).toLocaleDateString("pt-MZ")} */}
+                      Em breve
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                       <MapPin className="w-4 h-4" />
-                      <span className="text-sm">Local</span>
+                      <span className="text-sm">Modalidade</span>
                     </div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                      {curso.local || "Online"}
+                      {curso.modalidade || "Online"}
                     </div>
                   </div>
                 </div>

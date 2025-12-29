@@ -69,9 +69,9 @@ export default function PaymentModal({
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                 Pagar {itemNome === "inscricao" ? "Inscrição" : "Mensalidade"}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
+              {/* <p className="text-gray-600 dark:text-gray-400 text-sm">
                 Curso ID: {cursoId} | Horário ID: {horarioId}
-              </p>
+              </p> */}
             </div>
             <button
               onClick={onClose}
@@ -88,12 +88,9 @@ export default function PaymentModal({
                 <div className="text-gray-600 dark:text-gray-400 text-sm">
                   Total a pagar
                 </div>
-                <div className="text-3xl font-bold text-gray-900 dark:text-white">
+                <div className="text-3xl font-bold text-brand-lime dark:text-white">
                   {valor.toLocaleString("pt-MZ")} MT
                 </div>
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                Taxas incluídas
               </div>
             </div>
           </div>

@@ -207,7 +207,7 @@ export default function ModalConfirmacao({
       <div className="flex min-h-full items-center justify-center p-4">
         <div className="relative w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className={`px-6 py-4 ${actionType === "confirmar" ? "bg-gradient-to-r from-green-600 to-emerald-600" : "bg-gradient-to-r from-red-600 to-orange-600"}`}>
+          <div className={`px-6 py-4 ${actionType === "confirmar" ? "bg-gradient-to-r from-brand-main to-brand-lime" : "bg-gradient-to-r from-red-600 to-red-400"}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
@@ -269,7 +269,7 @@ export default function ModalConfirmacao({
                     }`}>
                       {actionType === "confirmar"
                         ? "Esta ação irá marcar o pagamento como confirmado e atualizar o status do estudante."
-                        : "Esta ação irá marcar o pagamento como rejeitado. O estudante será notificado."
+                        : "Esta ação irá marcar o pagamento como rejeitado."
                       }
                     </p>
                     {/* Debug info */}
@@ -513,8 +513,8 @@ export default function ModalConfirmacao({
                   disabled={loading || (actionType === "rejeitar" && !motivo.trim())}
                   className={`flex-1 px-4 py-3 rounded-lg font-medium ${
                     actionType === "confirmar"
-                      ? "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
-                      : "bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white"
+                      ? "bg-gradient-to-r from-brand-main to-brand-lime hover:from-brand-main/70 hover:to-brand-lime/70 text-white"
+                      : "bg-gradient-to-r from-red-600 to-red-400 hover:from-red-700 hover:to-red-600 text-white"
                   } disabled:opacity-50 disabled:cursor-not-allowed transition-all`}
                 >
                   {loading ? (
@@ -536,7 +536,7 @@ export default function ModalConfirmacao({
               </div>
 
               {/* Botão de teste direto (apenas em desenvolvimento) */}
-              {process.env.NODE_ENV === 'development' && (
+              {/* {process.env.NODE_ENV === 'development' && (
                 <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Teste Direto (Debug):</p>
                   <button
@@ -546,16 +546,16 @@ export default function ModalConfirmacao({
                     Testar Fetch Direto (Console F12)
                   </button>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
 
           {/* Footer */}
           <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-4 bg-gray-50 dark:bg-gray-900/50">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
+              {/* <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
                 ID: {pagamento.id}
-              </div>
+              </div> */}
               <div className="flex items-center gap-3">
                 <button
                   onClick={onClose}
