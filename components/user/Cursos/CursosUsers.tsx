@@ -200,7 +200,7 @@ export default function CursosUser({ inscricoes, loading = false }: CursosUserPr
           <div className="bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-800/30">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-600 dark:text-green-400">Investido em Inscrições</p>
+                <p className="text-sm text-green-600 dark:text-green-400">Inscrição</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {totais.totalInvestido.toLocaleString("pt-MZ")} MT
                 </p>
@@ -360,7 +360,7 @@ export default function CursosUser({ inscricoes, loading = false }: CursosUserPr
             </div>
 
             {/* Footer com Progresso */}
-            <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700">
+            {/* <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
@@ -387,7 +387,7 @@ export default function CursosUser({ inscricoes, loading = false }: CursosUserPr
                   ID: {inscricao.id.substring(0, 8)}...
                 </div>
               </div>
-            </div>
+            </div> */}
           </motion.div>
         ))}
       </div>
@@ -402,7 +402,7 @@ export default function CursosUser({ inscricoes, loading = false }: CursosUserPr
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm text-gray-600 dark:text-gray-400">Investimento Total:</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Pago:</p>
             <p className="text-2xl font-bold text-brand-main dark:text-brand-lime">
               {inscricoes.reduce((sum, inscricao) => {
                 return sum + parseFloat(inscricao.cursoHorario.inscricao || "0");
