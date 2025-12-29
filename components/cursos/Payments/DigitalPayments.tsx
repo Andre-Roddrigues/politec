@@ -161,7 +161,7 @@ export default function DigitalPayment({
           <p className="font-medium mb-1">Instruções:</p>
           <ol className="list-decimal pl-4 space-y-1">
             <li>Insira seu número de telefone M-Pesa</li>
-            <li>Clique em "Pagar com M-Pesa"</li>
+            <li>Clique em Pagar com M-Pesa</li>
             <li>Confirme a transação no seu telefone</li>
             <li>Após confirmação, você será redirecionado</li>
           </ol>

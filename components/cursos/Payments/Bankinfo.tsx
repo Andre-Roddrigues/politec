@@ -104,7 +104,7 @@ export default function BankInfo({ valor }: BankInfoProps) {
           <div className="flex gap-2">
             <span className="font-bold min-w-[20px]">6.</span>
             No campo conteúdo digite:{" "}
-            <strong className="text-blue-900 dark:text-blue-100">Graduacao</strong>
+            <strong className="text-blue-900 dark:text-blue-100">politec</strong>
           </div>
           <div className="flex gap-2">
             <span className="font-bold min-w-[20px]">7.</span>
