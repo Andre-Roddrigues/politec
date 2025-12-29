@@ -350,10 +350,10 @@ export default function CursosUser({ inscricoes, loading = false }: CursosUserPr
                       </button>
                     )}
 
-                    <button className="flex items-center justify-center gap-2 py-2.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg font-medium hover:bg-blue-200 dark:hover:bg-blue-800/40 transition-colors">
+                    {/* <button className="flex items-center justify-center gap-2 py-2.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg font-medium hover:bg-blue-200 dark:hover:bg-blue-800/40 transition-colors">
                       <Download className="w-4 h-4" />
                       Comprovativo
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
