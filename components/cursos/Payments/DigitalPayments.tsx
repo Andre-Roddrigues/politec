@@ -45,24 +45,12 @@ export default function DigitalPayment({
     return /^\d+$/.test(cleanNumber);
   };
 
-  const formatPhoneNumber = (input: string): string => {
-    // Remove tudo que não é dígito
-    let digits = input.replace(/\D/g, '');
-    
-    // Limita a 9 dígitos
-    digits = digits.slice(0, 9);
-    
-    // Adiciona a barra após o segundo dígito se tiver pelo menos 2 dígitos
-    if (digits.length > 2) {
-      return `${digits.slice(0, 2)}/${digits.slice(2)}`;
-    }
-    
-    return digits;
-  };
-
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhoneNumber(e.target.value);
-    setPhone(formatted);
+    // Remove tudo que não é dígito
+    const digits = e.target.value.replace(/\D/g, '');
+    // Limita a 9 dígitos
+    const limitedDigits = digits.slice(0, 9);
+    setPhone(limitedDigits);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,12 +59,9 @@ export default function DigitalPayment({
     setError(null);
 
     try {
-      // Remove a barra para salvar apenas os números
-      const cleanPhone = phone.replace('/', '');
-
-      // Validação adicional
-      if (!validatePhoneNumber(cleanPhone)) {
-        throw new Error("Número de telefone inválido. Use formato 84/85 seguido de 7 dígitos (ex: 841234567)");
+      // Validação
+      if (!validatePhoneNumber(phone)) {
+        throw new Error("Número de telefone inválido. Use 84 ou 85 seguido de 7 dígitos (ex: 841234567)");
       }
 
       await createPayment({
@@ -85,7 +70,7 @@ export default function DigitalPayment({
         horarioId,
         itemNome,
         metodoPagamento: "mpesa",
-        phoneNumber: cleanPhone,
+        phoneNumber: phone, // Já está limpo, apenas números
       });
 
       // Sucesso - não mostra alerta aqui, o toast será mostrado no PaymentModal
@@ -102,7 +87,7 @@ export default function DigitalPayment({
     }
   };
 
-  const isValidPhone = validatePhoneNumber(phone.replace('/', ''));
+  const isValidPhone = validatePhoneNumber(phone);
 
   return (
     <div className="space-y-4">
@@ -128,18 +113,18 @@ export default function DigitalPayment({
               value={phone}
               onChange={handlePhoneChange}
               className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 pl-12"
-              placeholder="84/85"
+              placeholder="84 ou 85 seguido de 7 dígitos"
               required
-              pattern="(84|85)\/\d{7}"
-              title="Formato: 84/841234567 ou 85/851234567"
+              pattern="(84|85)\d{7}"
+              title="Formato: 841234567 ou 851234567 (9 dígitos no total)"
             />
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
               +258
             </div>
           </div>
-          {/* <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Formato: 84/841234567 ou 85/851234567 (9 dígitos no total)
-          </div> */}
+          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Digite apenas números: 84/85 seguido de 7 dígitos (total 9 dígitos)
+          </div>
         </div>
 
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
@@ -170,7 +155,7 @@ export default function DigitalPayment({
         <button
           type="submit"
           disabled={loading || !isValidPhone}
-          className="w-full py-3 bg-gradient-to-r from-brad-main to-brand-lime text-white rounded-lg font-medium hover:from-brand-main/80 hover:to-brand-lime/80 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
+          className="w-full py-3 bg-gradient-to-r from-brand-main to-brand-lime text-white rounded-lg font-medium hover:from-brand-main/80 hover:to-brand-lime/80 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
         >
           {loading ? (
             <>
