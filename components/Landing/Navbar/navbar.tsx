@@ -2,138 +2,113 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Moon, Sun, Menu, X, Briefcase, GraduationCap, Info, User, FileText, LogOut } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import logo from "/public/images/logo.png";
+import { Briefcase, GraduationCap } from "lucide-react";
 import Image from "next/image";
 import LogoutButton from "../../common/LogoutButton";
+import { jwtDecode } from "jwt-decode";
+
+interface DecodedToken {
+  role?: string;
+}
 
 const Navbar = () => {
-  const [darkMode, setDarkMode] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState("Início");
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
-  const menuItems = [
-    { name: "Início", href: "/", icon: Briefcase },
-    // { name: "Sobre", href: "/#sobre", icon: Briefcase },
-    { name: "Cursos", href: "/cursos", icon: GraduationCap  },
-    // { name: "Como Funciona", href: "/#funcionamento", icon: Info  },
-    // { name: "Benefícios", href: "/#beneficios", icon: Briefcase },
-    { name: "", href: "/#contacto", icon: Briefcase },
-  ];
-
-  const mobileSidebarVariants = {
-    open: { x: 0 },
-    closed: { x: "-100%" },
-  };
-
-  // Função para verificar se existe token
-  const checkAuthToken = () => {
-    const hasAuthToken = document.cookie
+  // Lê token e extrai role
+  const checkAuth = () => {
+    const token = document.cookie
       .split("; ")
-      .find((row) => row.startsWith("auth_token="));
-    return !!hasAuthToken;
-  };
+      .find((row) => row.startsWith("auth_token="))
+      ?.split("=")[1];
 
-  useEffect(() => {
-    // Tema
-    if (localStorage.getItem("theme") === "light") {
-      document.documentElement.classList.add("light");
-      setDarkMode(true);
+    if (!token) {
+      setIsLoggedIn(false);
+      setUserRole(null);
+      return;
     }
 
-    // Verificar se existe sessão pelo cookie
-    setIsLoggedIn(checkAuthToken());
-
-    // Configurar verificação contínua do token
-    const authCheckInterval = setInterval(() => {
-      setIsLoggedIn(checkAuthToken());
-    }, 1000); // Verifica a cada segundo
-
-    // Limpar intervalo quando componente desmontar
-    return () => clearInterval(authCheckInterval);
-  }, []);
-
-  // Escutar mudanças no storage (caso logout em outra aba)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setIsLoggedIn(checkAuthToken());
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-
-  const toggleDarkMode = () => {
-    if (darkMode) {
-      document.documentElement.classList.remove("light");
-      localStorage.setItem("theme", "light");
-      setDarkMode(false);
-    } else {
-      document.documentElement.classList.add("light");
-      localStorage.setItem("theme", "light");
-      setDarkMode(true);
+    try {
+      const decoded: DecodedToken = jwtDecode(token);
+      setUserRole(decoded.role || null);
+      setIsLoggedIn(true);
+    } catch (err) {
+      setIsLoggedIn(false);
+      setUserRole(null);
     }
   };
 
-  const handleNavigation = (name: string) => {
-    setActiveLink(name);
-    setIsMobileOpen(false);
-  };
+  useEffect(() => {
+    checkAuth();
 
-  const toggleProfileDropdown = () => {
-    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+    const interval = setInterval(() => {
+      checkAuth();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Define link conforme role
+  const getDashboardLink = () => {
+    if (userRole === "admin") return "/admin/dashboard";
+    if (userRole === "estudante") return "/user/cursos";
+    if (userRole === "teacher" || userRole === "docente")
+      return "/docente/dashboard";
+
+    return "/";
   };
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="text-2xl font-bold text-brand-main dark:text-brand-lime flex items-center"
-        >
-          <Image src="/images/logo.png" alt="POLITEC" width={50} height={50} />
+        {/* LOGO */}
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/images/logo.png" alt="POLITEC" width={45} height={45} />
         </Link>
 
-        {/* Links desktop */}
-        <div className="hidden md:flex space-x-8 font-medium">
-          {menuItems.map((item) => (
+        {/* MENU */}
+        <div className="hidden md:flex gap-8 items-center">
+          <Link href="/" className="text-gray-600 hover:text-brand-main">
+            Início
+          </Link>
+
+          <Link href="/cursos" className="text-gray-600 hover:text-brand-main">
+            Cursos
+          </Link>
+
+          {isLoggedIn && (
             <Link
-              key={item.name}
-              href={item.href}
-              className="text-gray-600 hover:text-brand-main dark:hover:text-brand-lime transition"
+              href={getDashboardLink()}
+              className="text-brand-main font-semibold hover:underline"
             >
-              {item.name}
+              {userRole === "admin"
+                ? "Dashboard"
+                : userRole === "estudante"
+                ? "Meus Cursos"
+                : "Painel"}
             </Link>
-          ))}
+          )}
         </div>
 
-        {/* Ações */}
-        <div className="flex items-center space-x-4">
-          {/* Só aparece se NÃO estiver logado */}
+        {/* AÇÕES */}
+        <div className="flex items-center gap-3">
           {!isLoggedIn ? (
             <>
               <Link
                 href="/login"
-                className="px-4 py-2 rounded-lg border dark:border-brand-lime dark:text-white border-brand-main text-brand-main font-medium hover:bg-brand-main hover:text-white transition"
+                className="px-4 py-2 border border-brand-main text-brand-main rounded-lg hover:bg-brand-main hover:text-white transition"
               >
                 Entrar
               </Link>
               <Link
                 href="/registro"
-                className="px-4 py-2 rounded-lg bg-brand-main text-white font-medium hover:bg-brand-main/90 transition"
+                className="px-4 py-2 bg-brand-main text-white rounded-lg hover:opacity-90"
               >
                 Registro
               </Link>
             </>
           ) : (
-            <div className="flex items-center space-x-4">
-              {/* Dropdown de perfil */}
-              <LogoutButton />
-            </div>
+            <LogoutButton />
           )}
         </div>
       </div>
