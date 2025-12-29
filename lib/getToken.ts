@@ -2,9 +2,9 @@
 
 import { cookies } from "next/headers";
 
-export function getAuthToken(): string {
+export async function getAuthToken(): Promise<string> {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value || null;
     
     if (!token) {
