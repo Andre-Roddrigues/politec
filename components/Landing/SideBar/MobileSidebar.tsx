@@ -32,28 +32,28 @@ export default function MobileSidebar() {
     {
       name: "Perfil",
       icon: User,
-      path: "/perfil",
+      path: "/user/perfil",
       color: "text-blue-600",
       bgColor: "bg-blue-100 dark:bg-blue-900/30",
     },
     {
       name: "Cursos",
       icon: BookOpen,
-      path: "/cursos",
+      path: "/user/cursos",
       color: "text-green-600",
       bgColor: "bg-green-100 dark:bg-green-900/30",
     },
     {
       name: "Matrículas",
       icon: FileText,
-      path: "/matriculas",
+      path: "/user/matriculas",
       color: "text-purple-600",
       bgColor: "bg-purple-100 dark:bg-purple-900/30",
     },
     {
       name: "Mensalidades",
       icon: CreditCard,
-      path: "/mensalidades",
+      path: "/user/mensalidades",
       color: "text-orange-600",
       bgColor: "bg-orange-100 dark:bg-orange-900/30",
     },
@@ -69,7 +69,7 @@ export default function MobileSidebar() {
   return (
     <>
       {/* Floating Action Button */}
-      <motion.button
+      {/* <motion.button
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
@@ -81,7 +81,7 @@ export default function MobileSidebar() {
         ) : (
           <Menu className="w-6 h-6 text-white" />
         )}
-      </motion.button>
+      </motion.button> */}
 
       {/* Overlay */}
       <AnimatePresence>
