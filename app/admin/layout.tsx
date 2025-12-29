@@ -1,10 +1,10 @@
 import React from "react";
-import Sidebar from "../../components/Landing/SideBar/SideBar";
 import { SidebarProvider } from "../../context/SidebarContext";
+import Sidebar from "../../components/admin/sidebar/SideBar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="min-h-screen md:flex lg:flex  dark:bg-gray-900">
+    <div className="min-h-screen mb-[60px] md:flex lg:flex  dark:bg-gray-900">
       {/* Sidebar fixa à esquerda */}
 
       {/* Conteúdo principal */}

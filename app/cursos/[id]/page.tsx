@@ -1,513 +1,794 @@
+// app/cursos/[id]/page.tsx
 "use client";
-import React, { useState, useEffect } from "react";
-import { getCandidaturas, Candidatura } from "../../../lib/candidaturas-get";
-import { useRouter, useParams } from "next/navigation";
+
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import {
-  ArrowLeft,
-  HardHat,
   Calendar,
-  CheckCircle,
-  BookOpen,
-  Award,
-  User,
   Clock,
-  FileCheck,
+  Users,
+  MapPin,
+  BookOpen,
   GraduationCap,
-  Briefcase,
-  HeartHandshake,
-  AlertCircle,
-  AlertTriangle,
+  CreditCard,
+  DollarSign,
+  ArrowLeft,
   Loader2,
-  BookA,
-  Eye,
+  CheckCircle,
+  Shield,
+  Globe,
+  Home,
+  BookMarked,
+  Zap,
+  ChevronRight,
+  Target,
+  BarChart3,
+  UserCheck,
+  Sun,
+  Moon,
+  AlertCircle,
 } from "lucide-react";
-import { enviarCandidatura } from "../../../lib/enviar-candidatura-actions";
-import toast from "react-hot-toast";
-import CursoCandidaturaSkeleton from "../../../components/common/CursosSkeleton";
-import { getCandidato } from "../../../lib/candidato-actions";
-import Link from "next/link";
+import { getCookie } from "cookies-next";
+import { getCursoById } from "../../../lib/cursos-actions";
+import { getHorarioPrice, type CursoHorario } from "../../../lib/get-horario-price";
+import PaymentModal from "../../../components/cursos/Payments/PaymentModal";
 
-interface CursoReal {
-  id: string;
-  nome: string;
-  preco: number;
-  precoTeste: number;
-  descricao: string | null;
-  dataInicio: string | null;
-  dataFim: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-const CursoCandidatura = () => {
-  const router = useRouter();
+export default function CursoDetailPage() {
   const params = useParams();
-  const [curso, setCurso] = useState<CursoReal | null>(null);
+  const router = useRouter();
+  const cursoId = params.id as string;
+
+  const [curso, setCurso] = useState<any>(null);
+  const [horarios, setHorarios] = useState<CursoHorario[]>([]);
   const [loading, setLoading] = useState(true);
-  const [candidaturasCount, setCandidaturasCount] = useState(0);
-  const [hasCandidaturaForThisCourse, setHasCandidaturaForThisCourse] = useState(false);
-  const [candidaturaLoading, setCandidaturaLoading] = useState(true);
-  const [finalizando, setFinalizando] = useState(false);
+  const [horariosLoading, setHorariosLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [selectedHorario, setSelectedHorario] = useState<CursoHorario | null>(null);
+  const [paymentModal, setPaymentModal] = useState<{
+    open: boolean;
+    type: "inscricao" | "mensalidade" | "curso";
+    valor: number;
+    itemId: string; // ID do cursoHorario para o pagamento
+    cursoId: string; // ID do curso
+    horarioId: string; // ID do horário
+  }>({
+    open: false,
+    type: "inscricao",
+    valor: 0,
+    itemId: "",
+    cursoId: "",
+    horarioId: "",
+  });
 
-  // Benefícios do curso
-  const beneficiosCurso = [
-    "Certificado reconhecido",
-    "Estágio em empresas parceiras",
-    "Preparação para o mercado de trabalho",
-    "Acesso a bolsa de emprego",
-    "Material didático incluído",
-    "Acompanhamento personalizado",
-  ];
-
-  // Benefícios para o candidato
-  const beneficiosCandidato = [
-    "Oportunidade de emprego na área",
-    "Desenvolvimento de habilidades técnicas",
-    "Networking com profissionais do sector",
-    "Possibilidade de crescimento profissional",
-    "Acesso a sector em alta demanda",
-    "Salários competitivos no mercado",
-  ];
-
-  // Passos após a candidatura
-  const passosAposCandidatura = [
-    {
-      titulo: "Análise da Candidatura",
-      descricao:
-        "Nossa equipe analisará a sua candidatura e poderás controlar o processo no seu Perfil",
-      icone: <FileCheck className="w-6 h-6" />,
-    },
-    {
-      titulo: "Teste de Diagnóstico",
-      descricao: "Realização do teste para avaliar conhecimentos",
-      icone: <GraduationCap className="w-6 h-6" />,
-    },
-    {
-      titulo: "Início da Formação",
-      descricao:
-        "Após a aprovação no teste, será informado sobre a data do início da formação",
-      icone: <BookOpen className="w-6 h-6" />,
-    },
-  ];
-
-  // Requisitos do curso
-  const requisitos = ["Idade mínima: 18 anos", "Disponibilidade para formação"];
-
-  // Buscar curso real da API
   useEffect(() => {
-    const fetchCurso = async () => {
-      try {
-        const response = await fetch(
-          `https://backend-promet.unitec.academy/curso/${params.id}`
-        );
-        if (!response.ok) throw new Error("Erro ao buscar curso");
-        const data: CursoReal = await response.json();
-        setCurso(data);
-      } catch (error: any) {
-        toast.error(error.message || "Erro ao carregar curso.");
-        setCurso(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCurso();
-  }, [params.id]);
+    checkAuth();
+    loadCurso();
+    loadHorarios();
+  }, [cursoId]);
 
-  // Verificar candidaturas do candidato
-  useEffect(() => {
-    const checkCandidaturas = async () => {
-      try {
-        const candidato = await getCandidato();
-        if (!candidato) {
-          setCandidaturaLoading(false);
-          return;
-        }
-
-        const candidaturas: Candidatura[] = await getCandidaturas();
-        
-        // Contar candidaturas ativas
-        const count = candidaturas.filter(c => c.idCandidato === candidato.id).length;
-        setCandidaturasCount(count);
-        
-        // Verificar se já tem candidatura para este curso específico
-        const jaCandidatadoEsteCurso = candidaturas.some(
-          (c) => c.idCandidato === candidato.id && c.idCurso === params.id
-        );
-        setHasCandidaturaForThisCourse(jaCandidatadoEsteCurso);
-      } catch (error: any) {
-        toast.error(error.message || "Erro ao verificar candidaturas.");
-      } finally {
-        setCandidaturaLoading(false);
-      }
-    };
-
-    checkCandidaturas();
-  }, [params.id]);
-
-  // Função para candidatar-se - AGORA SEMPRE REDIRECIONA PARA CANDIDATURAS
-  const handleCandidatarSe = async (cursoId: string) => {
-    if (hasCandidaturaForThisCourse) {
-      // Se já está candidatado, redireciona para ver candidaturas
-      router.push("/user/candidaturas");
-      return;
-    }
-
-    if (candidaturasCount >= 2) {
-      // Se atingiu o limite, redireciona para ver candidaturas
-      router.push("/user/candidaturas");
-      return;
-    }
-
-    setFinalizando(true);
-
+  async function loadCurso() {
     try {
-      const candidato = await getCandidato();
-      if (!candidato) {
-        throw new Error("Preencha os dados do seu perfil para candidatar-se.");
+      const data = await getCursoById(cursoId);
+      setCurso(data);
+    } catch (error) {
+      console.error("Erro ao carregar curso:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadHorarios() {
+    try {
+      setHorariosLoading(true);
+      const data = await getHorarioPrice();
+
+      // Filtrar horários para este curso específico
+      const horariosDoCurso = data.filter(horario =>
+        horario.cursoId === cursoId || horario.curso?.id === cursoId
+      );
+
+      setHorarios(horariosDoCurso);
+
+      // Selecionar o primeiro horário por padrão
+      if (horariosDoCurso.length > 0) {
+        setSelectedHorario(horariosDoCurso[0]);
       }
+    } catch (error) {
+      console.error("Erro ao carregar horários:", error);
+    } finally {
+      setHorariosLoading(false);
+    }
+  }
 
-      await enviarCandidatura({ idCurso: cursoId });
-      setCandidaturasCount(prev => prev + 1);
-      setHasCandidaturaForThisCourse(true);
+  function checkAuth() {
+    const token = getCookie("auth_token");
+    setIsAuthenticated(!!token);
+  }
 
-      toast.success("Candidatura enviada com sucesso!");
-      
-      // SEMPRE redireciona para candidaturas após sucesso
-      router.push("/user/candidaturas");
-    } catch (error: any) {
-      toast.error(error.message || "Erro ao processar candidatura.");
-      setFinalizando(false);
+  // Função para abrir modal de pagamento
+  const handleOpenPaymentModal = (type: "inscricao" | "mensalidade" | "curso") => {
+    if (!selectedHorario) {
+      alert("Por favor, selecione um horário antes de prosseguir.");
+      return;
+    }
+
+    let valor = 0;
+    switch (type) {
+      case "inscricao":
+        valor = parseFloat(selectedHorario.inscricao) || 0;
+        break;
+      case "mensalidade":
+        valor = parseFloat(selectedHorario.mensalidade) || 0;
+        break;
+      case "curso":
+        valor = (parseFloat(selectedHorario.inscricao) || 0) + (parseFloat(selectedHorario.mensalidade) || 0);
+        break;
+    }
+
+    setPaymentModal({
+      open: true,
+      type,
+      valor,
+      itemId: selectedHorario.id, // cursoHorarioId
+      cursoId: selectedHorario.cursoId || cursoId, // ID do curso
+      horarioId: selectedHorario.horarioId, // ID do horário
+    });
+  };
+
+  // Calcular preços com base no horário selecionado
+  const getPrecoInscricao = () => {
+    if (!selectedHorario) return 0;
+    return parseFloat(selectedHorario.inscricao) || 0;
+  };
+
+  const getPrecoMensalidade = () => {
+    if (!selectedHorario) return 0;
+    return parseFloat(selectedHorario.mensalidade) || 0;
+  };
+
+  const getPrecoCurso = () => {
+    return getPrecoInscricao() + getPrecoMensalidade();
+  };
+
+  // Animações
+  const fadeInUp = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.3 }
     }
   };
 
-  const canApply = candidaturasCount < 2 && !hasCandidaturaForThisCourse;
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-  if (loading || candidaturaLoading) {
+  // Função para obter ícone do período
+  const getPeriodIcon = (periodo: string) => {
+    if (!periodo) return <Clock className="w-4 h-4 text-gray-500" />;
+
+    const periodoLower = periodo.toLowerCase();
+    if (periodoLower.includes('manhã') || periodoLower.includes('manha')) {
+      return <Sun className="w-4 h-4 text-yellow-500" />;
+    }
+    if (periodoLower.includes('tarde')) {
+      return <Sun className="w-4 h-4 text-orange-500" />;
+    }
+    if (periodoLower.includes('noite') || periodoLower.includes('laboral') || periodoLower.includes('noturno')) {
+      return <Moon className="w-4 h-4 text-indigo-500" />;
+    }
+    return <Clock className="w-4 h-4 text-gray-500" />;
+  };
+
+  // Função para formatar hora
+  const formatHora = (hora: string) => {
+    if (!hora) return '--:--';
+    return hora;
+  };
+
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <CursoCandidaturaSkeleton />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+        <div className="relative">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-main to-brand-lime flex items-center justify-center">
+            <Loader2 className="w-8 h-8 text-white animate-spin" />
+          </div>
+        </div>
+        <p className="mt-4 text-gray-600 dark:text-gray-400 text-sm">Carregando informações do curso...</p>
       </div>
     );
   }
 
   if (!curso) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+        <div className="text-center max-w-md px-4">
+          <div className="w-16 h-16 rounded-2xl bg-red-100 dark:bg-red-900/20 flex items-center justify-center mx-auto mb-4">
+            <BookOpen className="w-8 h-8 text-red-500 dark:text-red-400" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             Curso não encontrado
           </h2>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
+            Este curso não está disponível no momento.
+          </p>
           <button
             onClick={() => router.back()}
-            className="px-6 py-2 bg-brand-main text-white rounded-lg hover:bg-brand-lime transition-colors duration-300 flex items-center justify-center mx-auto"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-main hover:bg-brand-main/90 text-white text-sm font-medium rounded-lg transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Voltar
+            <ArrowLeft className="w-4 h-4" />
+            Voltar para cursos
           </button>
         </div>
       </div>
     );
   }
 
-  const descricao = curso.descricao ?? "Descrição não disponível";
-  const dataInicio = curso.dataInicio
-    ? new Date(curso.dataInicio).toLocaleDateString("pt-BR")
-    : "A definir";
-  const dataFim = curso.dataFim
-    ? new Date(curso.dataFim).toLocaleDateString("pt-BR")
-    : "A definir";
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-main-light/5 via-white to-brand-main-light/10 dark:from-gray-900 dark:via-gray-800 dark:to-brand-main/10 py-8">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center text-brand-main dark:text-brand-lime mb-6 hover:underline"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Voltar
-        </button>
-
-        {/* Cabeçalho */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden p-6 mb-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <div className="flex items-center mb-4 md:mb-0">
-              <div className="w-12 h-12 bg-brand-main/10 rounded-full flex items-center justify-center mr-4">
-                <HardHat className="w-6 h-6 text-brand-main" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-                  {curso.nome}
-                </h1>
-                {/* Status das candidaturas */}
-                <div className="flex items-center mt-2 gap-4">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
-                    Candidaturas: {candidaturasCount}/2
-                  </span>
-                  {candidaturasCount >= 2 && (
-                    <span className="text-xs bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 px-2 py-1 rounded-full">
-                      Limite atingido
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-end">
-              {/* Botão principal - AGORA SEMPRE LEVA PARA CANDIDATURAS QUANDO NÃO PODE APLICAR */}
-              {hasCandidaturaForThisCourse || candidaturasCount >= 2 ? (
-                <Link
-                  href="/user/candidaturas"
-                  className="px-6 py-3 bg-brand-main text-white font-semibold rounded-lg hover:bg-brand-main/70 transition-colors duration-300 flex items-center justify-center min-w-[180px]"
-                >
-                  <Eye className="w-5 h-5 mr-2" />
-                  Ver Candidaturas
-                </Link>
-              ) : (
-                <button
-                  onClick={() => handleCandidatarSe(curso.id)}
-                  disabled={finalizando}
-                  className={`px-6 py-3 font-semibold rounded-lg transition-colors duration-300 flex items-center justify-center min-w-[180px] ${
-                    finalizando
-                      ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-                      : "bg-brand-main text-white hover:bg-brand-main/70"
-                  }`}
-                >
-                  {finalizando ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Finalizando...
-                    </>
-                  ) : (
-                    "Finalizar Candidatura"
-                  )}
-                </button>
-              )}
-
-              {/* Mensagens informativas */}
-              {hasCandidaturaForThisCourse && (
-                <div className="mt-2 flex items-center text-sm text-amber-600 dark:text-amber-400">
-                  <AlertTriangle className="w-4 h-4 mr-1" />
-                  <span>Já te candidataste a este curso</span>
-                </div>
-              )}
-              
-              {candidaturasCount >= 2 && !hasCandidaturaForThisCourse && (
-                <div className="mt-2 flex flex-col items-center text-sm text-red-600 dark:text-red-400">
-                  <span>Limite de 2 candidaturas atingido</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="flex justify-between flex-wrap gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            {/* Esquerda - 3 primeiros */}
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center text-sm">
-                <Calendar className="w-4 h-4 text-brand-main mr-2" />
-                <span className="text-gray-600 dark:text-gray-300">
-                  Início: {dataInicio}
-                </span>
-              </div>
-              <div className="flex items-center text-sm">
-                <Clock className="w-4 h-4 text-brand-main mr-2" />
-                <span className="text-gray-600 dark:text-gray-300">Duração: 30 Dias</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <User className="w-4 h-4 text-brand-main mr-2" />
-                <span className="text-gray-600 dark:text-gray-300">Vagas limitadas</span>
-              </div>
-            </div>
-
-            {/* Direita - 3 últimos */}
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center text-sm">
-                <BookA className="w-4 h-4 text-brand-main mr-2" />
-                <span className="text-gray-600 dark:text-gray-300">
-                  Teste de Diagnóstico: Online
-                </span>
-              </div>
-              <div className="flex items-center text-sm">
-                <Clock className="w-4 h-4 text-brand-main mr-2" />
-                <span className="text-gray-600 dark:text-gray-300">Período: 09-24 de Outubro</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Processo após candidatura */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-bold text-brand-main dark:text-white mb-6 text-center">
-            Processo Após a Candidatura
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {passosAposCandidatura.map((passo, index) => (
-              <div
-                key={index}
-                className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-5 flex flex-col items-center text-center"
-              >
-                <div className="w-12 h-12 bg-brand-main/10 rounded-full flex items-center justify-center mb-3 text-brand-main">
-                  {passo.icone}
-                </div>
-                <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
-                  {passo.titulo}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">{passo.descricao}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-5">
-            <h3 className="text-md font-semibold text-blue-800 dark:text-blue-200 mb-3 flex items-center">
-              <AlertCircle className="w-5 h-5 mr-2" />
-              Informações Importantes
-            </h3>
-            <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-2">
-              <li>• As vagas são limitadas</li>
-              <li>• Início das aulas: {dataInicio}</li>
-              <li>• Duração: 30 Dias</li>
-              <li>• Modalidade: Presencial</li>
-              <li>• Local: Após a aprovação da candidatura</li>
-              <li>• Horário: Segunda a Sexta, 08:35-11:35 - 16:00-19:00</li>
-              <li>• Limite: Máximo 2 candidaturas por candidato</li>
-            </ul>
-          </div>
-
-          <div className="bg-brand-main/5 dark:bg-brand-main/10 rounded-xl p-5">
-            <h3 className="text-md font-semibold text-brand-main dark:text-brand-lime mb-3 flex items-center">
-              <HeartHandshake className="w-5 h-5 mr-2" />
-              Por que escolher este curso?
-            </h3>
-            <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
-              <li>• Sector em crescimento em Moçambique</li>
-              <li>• Professores com experiência prática</li>
-              <li>• Infraestrutura moderna e adequada</li>
-              <li>• Parcerias com empresas do sector</li>
-              <li>• Alta taxa de empregabilidade</li>
-              <li>• Certificação reconhecida nacionalmente</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Grid de cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {/* Benefícios do curso */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 h-full">
-            <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-3">
-                <Award className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Benefícios do Curso
-              </h3>
-            </div>
-            <ul className="space-y-3">
-              {beneficiosCurso.map((beneficio, index) => (
-                <li key={index} className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
-                    {beneficio}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Benefícios do candidato */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 h-full">
-            <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mr-3">
-                <Briefcase className="w-5 h-5 text-green-600 dark:text-green-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Vantagens para Você
-              </h3>
-            </div>
-            <ul className="space-y-3">
-              {beneficiosCandidato.map((beneficio, index) => (
-                <li key={index} className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-brand-main mr-2 mt-0.5 flex-shrink-0" />
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
-                    {beneficio}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Requisitos */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 h-full">
-            <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mr-3">
-                <FileCheck className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Requisitos de Inscrição
-              </h3>
-            </div>
-            <ul className="space-y-3">
-              {requisitos.map((requisito, index) => (
-                <li key={index} className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-purple-500 mr-2 mt-0.5 flex-shrink-0" />
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
-                    {requisito}
-                  </span>
-                </li>
-              ))}
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-purple-500 mr-2 flex-shrink-0" />
-                <span className="text-sm text-gray-600 dark:text-gray-300">
-                  Interesse pela área de {curso.nome}
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* CTA Final - AGORA SEMPRE LEVA PARA CANDIDATURAS QUANDO NÃO PODE APLICAR */}
-        <div className="text-center mt-10">
-          {hasCandidaturaForThisCourse || candidaturasCount >= 2 ? (
-            <Link
-              href="/user/candidaturas"
-              className="w-1/2 px-8 py-4 bg-brand-main text-white font-bold rounded-lg hover:bg-brand-main/70 transition-colors duration-300 text-lg flex items-center justify-center mx-auto min-w-[280px] gap-2"
-            >
-              <Eye className="w-5 h-5" />
-              Ver Candidaturas 
-            </Link>
-          ) : (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white dark:from-gray-900 dark:to-gray-950">
+      {/* Header Fixo */}
+      <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
             <button
-              onClick={() => handleCandidatarSe(curso.id)}
-              disabled={finalizando}
-              className={` px-8 py-4 font-bold rounded-lg transition-colors duration-300 text-lg flex items-center justify-center mx-auto min-w-[280px] gap-2 ${
-                finalizando
-                  ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-                  : "bg-brand-main text-white hover:bg-brand-lime"
-              }`}
+              onClick={() => router.back()}
+              className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 hover:text-brand-main dark:hover:text-brand-lime transition-colors"
             >
-              {finalizando ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Finalizando...
-                </>
-              ) : (
-                "Quero me Candidatar Agora"
-              )}
+              <ArrowLeft className="w-4 h-4" />
+              <span>Voltar</span>
             </button>
-          )}
-          
-          {/* Informação sobre o limite */}
-          <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-            <p>
-              Podes candidatar-te a até 2 cursos diferentes. 
-            </p>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              Detalhes do curso
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Conteúdo Principal */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-12 gap-8">
+          {/* Conteúdo do Curso */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="lg:col-span-8 space-y-8"
+          >
+            {/* Header do Curso */}
+            <motion.div variants={fadeInUp} className="space-y-6">
+              <div className="flex items-start justify-between">
+                <div className="space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full">
+                      {curso.nivel || "Nível"}
+                    </span>
+                    <span className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-full flex items-center gap-1.5">
+                      {curso.modalidade === "Online" ? (
+                        <Globe className="w-3.5 h-3.5" />
+                      ) : curso.modalidade === "Presencial" ? (
+                        <MapPin className="w-3.5 h-3.5" />
+                      ) : (
+                        <Home className="w-3.5 h-3.5" />
+                      )}
+                      {curso.modalidade}
+                    </span>
+                    <span className={`px-3 py-1.5 text-xs font-medium rounded-full flex items-center gap-1.5 ${curso.inscricoesAbertas
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                        : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                      }`}>
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      {curso.inscricoesAbertas ? "Inscrições Abertas" : "Inscrições Encerradas"}
+                    </span>
+                  </div>
+
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white leading-tight">
+                    {curso.titulo}
+                  </h1>
+
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {curso.descricao}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Cards de Informações */}
+            <motion.div variants={fadeInUp} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 hover:border-brand-main/30 dark:hover:border-brand-lime/30 transition-colors">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-main/10 to-brand-lime/10 flex items-center justify-center">
+                    <Target className="w-5 h-5 text-brand-main dark:text-brand-lime" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Objetivos</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">O que você vai aprender</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Formação completa com foco em mercado e prática profissional.
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 hover:border-brand-main/30 dark:hover:border-brand-lime/30 transition-colors">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/20 dark:to-blue-800/10 flex items-center justify-center">
+                    <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Mercado</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Oportunidades</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Alta demanda no mercado com oportunidades em diversas áreas.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Detalhes do Curso */}
+            <motion.div variants={fadeInUp} className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-brand-main" />
+                  Detalhes do Curso
+                </h3>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <Clock className="w-4 h-4" />
+                      <span className="text-sm">Duração</span>
+                    </div>
+                    <div className="font-semibold text-gray-900 dark:text-white">
+                      {curso.duracao}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <Users className="w-4 h-4" />
+                      <span className="text-sm">Vagas</span>
+                    </div>
+                    <div className="font-semibold text-gray-900 dark:text-white">
+                      {curso.vagas || "Disponível"}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <Calendar className="w-4 h-4" />
+                      <span className="text-sm">Início</span>
+                    </div>
+                    <div className="font-semibold text-gray-900 dark:text-white">
+                      {new Date(curso.dataInicio).toLocaleDateString("pt-MZ")}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <MapPin className="w-4 h-4" />
+                      <span className="text-sm">Local</span>
+                    </div>
+                    <div className="font-semibold text-gray-900 dark:text-white">
+                      {curso.local || "Online"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Seleção de Horários */}
+            <motion.div variants={fadeInUp} className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-brand-main" />
+                    Selecione o Horário
+                  </h3>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                    {horarios.length} opções disponíveis
+                  </span>
+                </div>
+
+                {horariosLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 text-brand-main animate-spin" />
+                  </div>
+                ) : horarios.length === 0 ? (
+                  <div className="text-center py-8">
+                    <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Nenhum horário disponível para este curso.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {horarios.map((horario) => (
+                        <button
+                          key={horario.id}
+                          onClick={() => setSelectedHorario(horario)}
+                          className={`p-4 rounded-xl border transition-all duration-200 text-left ${selectedHorario?.id === horario.id
+                              ? "border-brand-main dark:border-brand-lime bg-brand-main/5 dark:bg-brand-main/10"
+                              : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                            }`}
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                              {getPeriodIcon(horario.horario?.periodo)}
+                              <span className={`font-medium ${selectedHorario?.id === horario.id
+                                  ? "text-brand-main dark:text-brand-lime"
+                                  : "text-gray-900 dark:text-white"
+                                }`}>
+                                {horario.horario?.periodo || 'Período'}
+                              </span>
+                            </div>
+                            {selectedHorario?.id === horario.id && (
+                              <CheckCircle className="w-4 h-4 text-green-500" />
+                            )}
+                          </div>
+
+                          <div className="space-y-2">
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              <span className="font-medium">Horário:</span> {formatHora(horario.horario?.hora)}
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              <span className="font-medium">Inscrição:</span>{" "}
+                              <span className="font-semibold text-gray-900 dark:text-white">
+                                {parseFloat(horario.inscricao || "0").toLocaleString('pt-MZ')} MT
+                              </span>
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              <span className="font-medium">Mensalidade:</span>{" "}
+                              <span className="font-semibold text-gray-900 dark:text-white">
+                                {parseFloat(horario.mensalidade || "0").toLocaleString('pt-MZ')} MT
+                              </span>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+
+                    {selectedHorario && (
+                      <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Horário selecionado:</p>
+                            <p className="font-medium text-gray-900 dark:text-white">
+                              {selectedHorario.horario?.periodo} • {formatHora(selectedHorario.horario?.hora)}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Valores:</p>
+                            <p className="font-bold text-lg text-brand-main dark:text-brand-lime">
+                              Inscrição: {parseFloat(selectedHorario.inscricao || "0").toLocaleString('pt-MZ')} MT
+                            </p>
+                            <p className="font-bold text-lg text-brand-lime dark:text-brand-main">
+                              Mensal: {parseFloat(selectedHorario.mensalidade || "0").toLocaleString('pt-MZ')} MT
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Sidebar de Pagamentos */}
+          <div className="lg:col-span-4">
+            <div className="sticky top-24 space-y-6">
+              {/* Card com horário selecionado */}
+              {selectedHorario && (
+                <motion.div
+                  initial={{ x: 20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-5 border border-blue-200 dark:border-blue-800/30"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                        Horário Selecionado
+                      </h3>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">
+                        {selectedHorario.horario?.periodo}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Período:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{selectedHorario.horario?.periodo}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Horário:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{formatHora(selectedHorario.horario?.hora)}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Card de Inscrição */}
+              <motion.div
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm"
+              >
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 flex items-center justify-center">
+                      <GraduationCap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                        Pagar Inscrição
+                      </h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Taxa única de inscrição
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <div className="text-3xl font-bold text-gray-900 dark:text-white">
+                      {selectedHorario
+                        ? parseFloat(selectedHorario.inscricao || "0").toLocaleString("pt-MZ")
+                        : "0"}
+                      <span className="text-base text-gray-500 dark:text-gray-400"> MT</span>
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {selectedHorario
+                        ? `Inscrição para ${selectedHorario.horario?.periodo}`
+                        : "Selecione um horário"}
+                    </p>
+                  </div>
+
+                  {isAuthenticated && curso.inscricoesAbertas ? (
+                    <button
+                      onClick={() => handleOpenPaymentModal("inscricao")}
+                      disabled={!selectedHorario}
+                      className={`w-full py-3 font-medium rounded-lg transition-colors ${selectedHorario
+                          ? "bg-brand-main hover:bg-brand-main/90 text-white"
+                          : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                        }`}
+                    >
+                      {selectedHorario ? "Garanta sua Vaga" : "Selecione um horário"}
+                    </button>
+                  ) : (
+                    <div className="text-center py-3 text-gray-500 dark:text-gray-400 text-sm">
+                      {!isAuthenticated ? "Faça login para pagar" : "Inscrições encerradas"}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+
+              {/* Card de Mensalidade */}
+              <motion.div
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm"
+              >
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/10 to-green-600/10 flex items-center justify-center">
+                      <CreditCard className="w-5 h-5 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                        Pagar Mensalidade
+                      </h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Mensalidade do curso
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <div className="text-3xl font-bold text-gray-900 dark:text-white">
+                      {selectedHorario
+                        ? parseFloat(selectedHorario.mensalidade || "0").toLocaleString("pt-MZ")
+                        : "0"}
+                      <span className="text-base text-gray-500 dark:text-gray-400"> MT</span>
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {selectedHorario
+                        ? `Mensalidade para ${selectedHorario.horario?.periodo}`
+                        : "Selecione um horário"}
+                    </p>
+                  </div>
+
+                  {isAuthenticated && curso.inscricoesAbertas ? (
+                    <button
+                      onClick={() => handleOpenPaymentModal("mensalidade")}
+                      disabled={!selectedHorario}
+                      className={`w-full py-3 font-medium rounded-lg transition-colors ${selectedHorario
+                          ? "bg-brand-lime hover:bg-brand-lime/90 text-white"
+                          : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                        }`}
+                    >
+                      {selectedHorario ? "Pagar Mensalidade" : "Selecione um horário"}
+                    </button>
+                  ) : (
+                    <div className="text-center py-3 text-gray-500 dark:text-gray-400 text-sm">
+                      {!isAuthenticated ? "Faça login para pagar" : "Inscrições encerradas"}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+
+              {/* Card Curso - Destaque */}
+              <motion.div
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="bg-gradient-to-br from-brand-main/5 via-brand-main/10 to-brand-lime/5 dark:from-brand-main/10 dark:via-brand-main/5 dark:to-brand-lime/10 rounded-2xl overflow-hidden border border-brand-main/20 dark:border-brand-lime/20 relative"
+              >
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-brand-main/10 to-transparent rounded-full -translate-y-12 translate-x-12"></div>
+                <div className="relative p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-main to-brand-lime flex items-center justify-center">
+                      <DollarSign className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                        Pagamento Total
+                      </h3>
+                      {/* <p className="text-xs text-brand-main dark:text-brand-lime font-medium">
+                        Economia garantida
+                      </p> */}
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-2 mb-2">
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white">
+                        {selectedHorario
+                          ? getPrecoCurso().toLocaleString("pt-MZ")
+                          : "0"}
+                        <span className="text-base text-gray-500 dark:text-gray-400"> MT</span>
+                      </div>
+                      {/* {selectedHorario && (
+                        <div className="text-sm text-gray-500 line-through">
+                          {(getPrecoInscricao() + getPrecoMensalidade() + 200).toLocaleString("pt-MZ")} MT
+                        </div>
+                      )} */}
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {selectedHorario
+                        ? `Inscrição + 1ª Mensalidade (${selectedHorario.horario?.periodo})`
+                        : "Inscrição + 1ª Mensalidade"}
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {isAuthenticated && curso.inscricoesAbertas ? (
+                      <>
+                        <button
+                          onClick={() => handleOpenPaymentModal("curso")}
+                          disabled={!selectedHorario}
+                          className={`w-full py-3 font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${selectedHorario
+                              ? "bg-gradient-to-r from-brand-main to-brand-lime text-white hover:opacity-90"
+                              : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                            }`}
+                        >
+                          <Zap className="w-4 h-4" />
+                          {selectedHorario ? "Pagar Tudo Agora" : "Selecione um horário"}
+                        </button>
+                        <div className="flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                          <Shield className="w-3 h-3" />
+                          <span>Pagamento 100% seguro</span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-3 text-gray-500 dark:text-gray-400 text-sm">
+                        {!isAuthenticated ? "Faça login para pagar" : "Inscrições encerradas"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Benefícios */}
+              {/* <motion.div
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700"
+              >
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-brand-main" />
+                  O que você recebe
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      Acesso completo ao curso
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      Material didático incluso
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      Certificado reconhecido
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      Suporte durante o curso
+                    </span>
+                  </div>
+                </div>
+              </motion.div> */}
+
+              {/* Aviso de Login */}
+              {!isAuthenticated && (
+                <motion.div
+                  initial={{ x: 20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800/30 rounded-2xl p-5"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center flex-shrink-0">
+                      <UserCheck className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                        Faça login para continuar
+                      </h4>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+                        Entre com sua conta para realizar a inscrição.
+                      </p>
+                      <button
+                        onClick={() => router.push("/login")}
+                        className="text-xs px-4 py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 font-medium rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-800/40 transition-colors"
+                      >
+                        Entrar na conta
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Modal de Pagamento */}
+      {selectedHorario && (
+        <PaymentModal
+          isOpen={paymentModal.open}
+          onClose={() => setPaymentModal({ ...paymentModal, open: false })}
+          itemId={paymentModal.itemId}
+          cursoId={paymentModal.cursoId}
+          horarioId={paymentModal.horarioId}
+          itemNome={paymentModal.type === "curso" ? "inscricao" : paymentModal.type}
+          valor={paymentModal.valor}
+        />
+      )}
     </div>
   );
-};
-
-export default CursoCandidatura;
+}

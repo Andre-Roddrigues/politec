@@ -802,3 +802,49 @@ span.flatpickr-weekday,
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+@layer utilities {
+  .sidebar-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .glass-effect {
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg;
+  }
+  
+  /* Scrollbar customizada */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 20px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.7);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .mobile-bottom-nav {
+    bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Safe area para iPhone */
+@supports (padding: max(0px)) {
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}

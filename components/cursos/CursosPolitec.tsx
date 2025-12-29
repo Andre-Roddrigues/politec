@@ -78,21 +78,18 @@ export default function CursosPolitec() {
         }
     }
 
-    function handleInscreverClick(cursoId: string, cursoNome: string) {
-        if (!isAuthenticated) {
-            // Armazenar o curso selecionado para redirecionamento após login
-            sessionStorage.setItem('redirectAfterLogin', `/cursos/${cursoId}`);
-            sessionStorage.setItem('selectedCurso', JSON.stringify({ id: cursoId, nome: cursoNome }));
+    // No botão de inscrever-se, em vez de abrir modal, redirecionar:
+function handleInscreverClick(cursoId: string, cursoNome: string) {
+  if (!isAuthenticated) {
+    sessionStorage.setItem('redirectAfterLogin', `/cursos/${cursoId}`);
+    sessionStorage.setItem('selectedCurso', JSON.stringify({ id: cursoId, nome: cursoNome }));
+    router.push('/login');
+    return;
+  }
 
-            // Redirecionar para login
-            router.push('/login');
-            return;
-        }
-
-        // Se autenticado, abrir modal normalmente
-        setSelectedCurso({ id: cursoId, nome: cursoNome });
-        setModalOpen(true);
-    }
+  // Redirecionar para página de inscrição do curso
+  router.push(`/cursos/${cursoId}`);
+}
 
     async function applyFilters() {
         setLoading(true);
@@ -488,28 +485,6 @@ export default function CursosPolitec() {
                         </div>
                     )}
                 </motion.div>
-
-                {/* Footer Info */}
-                {/* <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/30 rounded-2xl p-6 border border-blue-200 dark:border-blue-800/30"
-                >
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                                Precisa de ajuda para escolher seu curso?
-                            </h3>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm">
-                                Nossa equipe de orientadores está disponível para ajudá-lo a tomar a melhor decisão.
-                            </p>
-                        </div>
-                        <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-brand-main text-white font-medium rounded-xl hover:shadow-lg transition-all duration-300 whitespace-nowrap">
-                            Falar com orientador
-                        </button>
-                    </div>
-                </motion.div> */}
             </div>
 
             {/* Modal de Inscrição - Só renderiza se autenticado */}
