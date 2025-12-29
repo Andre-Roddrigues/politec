@@ -164,18 +164,18 @@ export default function ModalDetalhes({
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                            Nome Completo
+                            Nome
                           </label>
                           <p className="text-gray-900 dark:text-white font-medium">
-                            {estudante.user.nome} {estudante.user.apelido}
+                            {estudante.user.nome} 
                           </p>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                            ID do Estudante
+                           Apelido
                           </label>
-                          <p className="text-sm text-gray-600 dark:text-gray-300 font-mono bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                            {estudante.id}
+                          <p className="text-gray-900 dark:text-white font-medium">
+                            {estudante.user.apelido}
                           </p>
                         </div>
                       </div>
@@ -284,9 +284,6 @@ export default function ModalDetalhes({
                             {estudante.cursoHorario.curso.nome}
                           </p>
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-6">
-                          ID: {estudante.cursoHorario.curso.id}
-                        </p>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -332,11 +329,8 @@ export default function ModalDetalhes({
                           <div className="flex items-center justify-between">
                             <DollarSign className="w-8 h-8 text-green-500" />
                             <div className="text-right">
-                              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                              <p className="text-xl font-bold text-brand-lime dark:text-white">
                                 {Number(estudante.cursoHorario.inscricao).toLocaleString("pt-MZ")} MT
-                              </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                Valor único
                               </p>
                             </div>
                           </div>
@@ -349,11 +343,8 @@ export default function ModalDetalhes({
                           <div className="flex items-center justify-between">
                             <CreditCard className="w-8 h-8 text-blue-500" />
                             <div className="text-right">
-                              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                              <p className="text-xl font-bold text-brand-lime dark:text-white">
                                 {Number(estudante.cursoHorario.mensalidade).toLocaleString("pt-MZ")} MT
-                              </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                Mensal
                               </p>
                             </div>
                           </div>
