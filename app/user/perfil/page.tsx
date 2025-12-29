@@ -1,6 +1,7 @@
 "use client";
 
-import PerfilUser from "../../../components/user/perfil/PerfilUser";
+import PerfilUser from "../../../components/user/perfil/perfilUser";
+
 
 
 const Page = () => {
