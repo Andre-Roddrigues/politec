@@ -148,7 +148,7 @@ export async function atualizarStatusPagamento(
     console.log("Payload a ser enviado:", payload);
 
     // Usar o mesmo endpoint para ambos os casos
-    const endpoint = `https://backend-politec.unitec.ac.mz/admin/confirmar-pagamento/${pagamentoId}`;
+    const endpoint = `https://backend-politec.unitec.ac.mz/admin/mudar-status-pagamento/${pagamentoId}`;
 
     const response = await fetch(
       endpoint,
