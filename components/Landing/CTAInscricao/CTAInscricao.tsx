@@ -43,7 +43,7 @@ export default function CTAInscricao() {
           </h2>
           
           <p className="text-xl text-white/90 max-w-3xl mx-auto mb-12">
-            Inscreva-se agora e garanta sua vaga nos cursos técnicos mais procurados do mercado
+            Inscreva-se agora e garanta sua vaga nos cursos Médios mais procurados do mercado
           </p>
 
           {/* Features */}
