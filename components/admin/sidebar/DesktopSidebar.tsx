@@ -158,7 +158,7 @@ export default function DesktopSidebar({ collapsed = false, onToggleCollapse }: 
           )}
           
           {collapsed && (
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-orange-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-main to-brand-lime flex items-center justify-center">
               <Shield className="w-6 h-6 text-white" />
             </div>
           )}

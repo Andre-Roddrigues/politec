@@ -12,6 +12,7 @@ export function middleware(req: NextRequest) {
     "/recuperar-senha",
     "/formulario/parceiro",
     "/cursos",
+    "/cursos/teste",
     "/registro/teste",
     "/testes",
     "/nossos-termos",
@@ -39,7 +40,9 @@ export function middleware(req: NextRequest) {
   if (token && authRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/cursos", req.url));
   }
-
+if (pathname.startsWith("/cursos/teste")) {
+    return NextResponse.next();
+  }
   // Se rota pública → libera
   if (publicRoutes.includes(pathname) || authRoutes.includes(pathname)) {
     return NextResponse.next();

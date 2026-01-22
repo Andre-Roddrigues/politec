@@ -4,18 +4,18 @@ import { cookies } from "next/headers";
 
 export async function getTesteByCursoAction(idCurso: string) {
   try {
-     const token = (await cookies()).get("auth_token")?.value;
-    if (!token) {
-      throw new Error("Token de autenticação não encontrado!");
-    }
+    //  const token = (await cookies()).get("auth_token")?.value;
+    // if (!token) {
+    //   throw new Error("Token de autenticação não encontrado!");
+    // }
 
     const response = await fetch(
-      `https://backend-promet.unitec.academy/curso-teste/${idCurso}`,
+      `https://backend-politec.unitec.ac.mz/teste-vocacional/curso/${idCurso}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
         },
         cache: "no-store",
       }

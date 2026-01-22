@@ -32,7 +32,7 @@ import { finalizarTesteAction } from "../../../../lib/FinalizarTesteAction";
 
 type Opcao = {
   id: string;
-  idQuestao: string;
+  questaoId: string;
   texto: string;
   correcta: boolean;
 };
@@ -163,10 +163,10 @@ export default function RealizarTeste() {
     
     try {
       const dadosEnvio = {
-        idTeste: teste?.id || "",
+        testeId: teste?.id || "",
         respostas: respostas.map((r) => ({
-          idQuestao: r.questaoId,
-          idOpcao: r.opcaoId,
+          questaoId: r.questaoId,
+          opcaoId: r.opcaoId,
         })),
       };
 
@@ -346,10 +346,10 @@ export default function RealizarTeste() {
 
     try {
       const dadosEnvio = {
-        idTeste: teste?.id || "",
+        testeId: teste?.id || "",
         respostas: respostas.map((r) => ({
-          idQuestao: r.questaoId,
-          idOpcao: r.opcaoId,
+          questaoId: r.questaoId,
+          opcaoId: r.opcaoId,
         })),
       };
 

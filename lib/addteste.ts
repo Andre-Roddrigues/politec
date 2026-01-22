@@ -96,7 +96,7 @@ export async function listarTestesAction(): Promise<{
 
 // 🔹 Adicionar Questão
 export async function adicionarQuestaoAction(dados: {
-  idTeste: string;
+  testeId: string;
   enunciado: string;
 }) {
   try {
@@ -117,7 +117,7 @@ export async function adicionarQuestaoAction(dados: {
 
 // 🔹 Adicionar Opção
 export async function adicionarOpcaoAction(dados: {
-  idQuestao: string;
+  questaoId: string;
   texto: string;
   correcta: boolean;
 }) {

@@ -281,8 +281,8 @@ export default function CursoDetailPage() {
                       {curso.modalidade}
                     </span>
                     <span className={`px-3 py-1.5 text-xs font-medium rounded-full flex items-center gap-1.5 ${curso.inscricoesAbertas
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
-                        : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                      : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
                       }`}>
                       <CheckCircle className="w-3.5 h-3.5" />
                       {curso.inscricoesAbertas ? "Inscrições Abertas" : "Inscrições Encerradas"}
@@ -418,16 +418,16 @@ export default function CursoDetailPage() {
                           key={horario.id}
                           onClick={() => setSelectedHorario(horario)}
                           className={`p-4 rounded-xl border transition-all duration-200 text-left ${selectedHorario?.id === horario.id
-                              ? "border-brand-main dark:border-brand-lime bg-brand-main/5 dark:bg-brand-main/10"
-                              : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                            ? "border-brand-main dark:border-brand-lime bg-brand-main/5 dark:bg-brand-main/10"
+                            : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                             }`}
                         >
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
                               {getPeriodIcon(horario.horario?.periodo)}
                               <span className={`font-medium ${selectedHorario?.id === horario.id
-                                  ? "text-brand-main dark:text-brand-lime"
-                                  : "text-gray-900 dark:text-white"
+                                ? "text-brand-main dark:text-brand-lime"
+                                : "text-gray-900 dark:text-white"
                                 }`}>
                                 {horario.horario?.periodo || 'Período'}
                               </span>
@@ -489,7 +489,7 @@ export default function CursoDetailPage() {
           <div className="lg:col-span-4">
             <div className="sticky top-24 space-y-6">
               {/* Card com horário selecionado */}
-              {selectedHorario && (
+              {/* {selectedHorario && (
                 <motion.div
                   initial={{ x: 20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
@@ -521,7 +521,7 @@ export default function CursoDetailPage() {
                     </div>
                   </div>
                 </motion.div>
-              )}
+              )} */}
 
               {/* Card de Inscrição */}
               <motion.div
@@ -564,8 +564,8 @@ export default function CursoDetailPage() {
                       onClick={() => handleOpenPaymentModal("inscricao")}
                       disabled={!selectedHorario}
                       className={`w-full py-3 font-medium rounded-lg transition-colors ${selectedHorario
-                          ? "bg-brand-main hover:bg-brand-main/90 text-white"
-                          : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                        ? "bg-brand-main hover:bg-brand-main/90 text-white"
+                        : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                         }`}
                     >
                       {selectedHorario ? "Garanta sua Vaga" : "Selecione um horário"}
@@ -619,8 +619,8 @@ export default function CursoDetailPage() {
                       onClick={() => handleOpenPaymentModal("mensalidade")}
                       disabled={!selectedHorario}
                       className={`w-full py-3 font-medium rounded-lg transition-colors ${selectedHorario
-                          ? "bg-brand-lime hover:bg-brand-lime/90 text-white"
-                          : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                        ? "bg-brand-lime hover:bg-brand-lime/90 text-white"
+                        : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                         }`}
                     >
                       {selectedHorario ? "Pagar Mensalidade" : "Selecione um horário"}
@@ -684,8 +684,8 @@ export default function CursoDetailPage() {
                           onClick={() => handleOpenPaymentModal("curso")}
                           disabled={!selectedHorario}
                           className={`w-full py-3 font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${selectedHorario
-                              ? "bg-gradient-to-r from-brand-main to-brand-lime text-white hover:opacity-90"
-                              : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                            ? "bg-gradient-to-r from-brand-main to-brand-lime text-white hover:opacity-90"
+                            : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                             }`}
                         >
                           <Zap className="w-4 h-4" />
@@ -705,6 +705,46 @@ export default function CursoDetailPage() {
                 </div>
               </motion.div>
 
+              {/* Card Teste Vocacional */}
+              <motion.div
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl overflow-hidden border border-purple-200 dark:border-purple-800/30"
+              >
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-brand-main to-brand-lime flex items-center justify-center">
+                      <Target className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                        Teste Vocacional
+                      </h3>
+                      <p className="text-xs text-gray-500 dark:text-purple-400">
+                        Descubra sua aptidão
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                      Faça nosso teste para verificar se este curso é adequado para seu perfil e habilidades.
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                      <Clock className="w-3 h-3" />
+                      <span>Aproximadamente 20 minutos</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => router.push(`/cursos/teste/${cursoId}`)}
+                    className="w-full py-3 bg-gradient-to-r from-brand-main to-brand-lime text-white hover:opacity-90 font-medium rounded-lg transition-all flex items-center justify-center gap-2"
+                  >
+                    <Target className="w-4 h-4" />
+                    Fazer Teste Vocacional
+                  </button>
+                </div>
+              </motion.div>
               {/* Benefícios */}
               {/* <motion.div
                 initial={{ x: 20, opacity: 0 }}

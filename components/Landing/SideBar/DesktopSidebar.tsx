@@ -69,7 +69,7 @@ export default function DesktopSidebar({ collapsed = false, onToggleCollapse }: 
     <motion.aside
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className={`h-screen fixed left-0 top-0 z-40 flex flex-col bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ${
+      className={`h-screen mt-[60px] fixed left-0 top-0 z-40 flex flex-col bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ${
         collapsed ? "w-20" : "w-64"
       }`}
     >

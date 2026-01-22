@@ -3,8 +3,8 @@
 import { cookies } from "next/headers";
 
 export async function finalizarTesteAction(dados: {
-  idTeste: string;
-  respostas: { idQuestao: string; idOpcao: string }[];
+  testeId: string;
+  respostas: { questaoId: string; opcaoId: string }[];
 }) {
   try {
     const token = (await cookies()).get("auth_token")?.value;
@@ -13,7 +13,7 @@ export async function finalizarTesteAction(dados: {
       throw new Error("Token de autenticação não encontrado.");
     }
 
-    const response = await fetch("https://backend-promet.unitec.academy/fazer-teste", {
+    const response = await fetch("https://backend-politec.unitec.ac.mz/teste-vocacional/fazer", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
