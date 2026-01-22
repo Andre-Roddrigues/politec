@@ -13,7 +13,7 @@ export default function Requisitos() {
     {
       icon: <BookOpen className="w-6 h-6" />,
       title: "Certificado de Habilitações",
-      description: "9º, 10º ou 12º ano (original e cópia autenticada)",
+      description: "9º, 10º ou 12º ano (original e cópia)",
       obrigatorio: true
     },
     {
@@ -61,7 +61,7 @@ export default function Requisitos() {
           </h2>
           
           <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto">
-            Toda a documentação necessária para efetuar a sua matrícula com sucesso
+            Toda a documentação necessária para efectuar a sua matrícula com sucesso
           </p>
         </div>
 
@@ -106,8 +106,8 @@ export default function Requisitos() {
             {/* Taxas */}
             <div>
               <h3 className="text-2xl font-bold text-gray-700 mb-6 flex items-center gap-3">
-                <CreditCard className="w-8 h-8 text-brand-main" />
-                Taxas e Valores
+                {/* <CreditCard className="w-8 h-8 text-brand-main" /> */}
+                
               </h3>
               
               <div className="bg-gradient-to-br from-brand-main/5 to-brand-lime/5 rounded-2xl p-6 border border-brand-main/20">
