@@ -5,27 +5,6 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get("auth_token")?.value;
   const { pathname } = req.nextUrl;
 
-  // Rotas públicas (sempre acessíveis sem login)
-  const publicRoutes = [
-    "/",
-    "/duvidas",
-    "/recuperar-senha",
-    "/formulario/parceiro",
-    "/cursos",
-    "/cursos/teste",
-    "/registro/teste",
-    "/testes",
-    "/nossos-termos",
-     "/nova-senha",         // adicionado
-    "/nova-senha/[otp]",
-  ];
-
-  // Rotas especiais que não podem ser acessadas após login
-  const authRoutes = ["/login", "/registro", "/nova-senha",         // adicionado
-    "/nova-senha/[otp]"];
-  if (pathname.startsWith("/nova-senha")) {
-    return NextResponse.next();
-  }
   // Ignorar assets e APIs
   if (
     pathname.startsWith("/_next") ||
@@ -36,26 +15,46 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Se usuário já logado tentar ir para login/registro → manda para perfil
+  // Nova senha sempre liberada
+  if (pathname.startsWith("/nova-senha")) {
+    return NextResponse.next();
+  }
+
+  // ✅ Cursos públicos e detalhes (/cursos/[id])
+  if (pathname === "/cursos" || pathname.startsWith("/cursos/")) {
+    return NextResponse.next();
+  }
+
+  const publicRoutes = [
+    "/",
+    "/duvidas",
+    "/recuperar-senha",
+    "/formulario/parceiro",
+    "/registro/teste",
+    "/testes",
+    "/nossos-termos",
+  ];
+
+  const authRoutes = ["/login", "/registro"];
+
+  // Se usuário logado tentar login/registro
   if (token && authRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/cursos", req.url));
   }
-if (pathname.startsWith("/cursos/teste")) {
-    return NextResponse.next();
-  }
-  // Se rota pública → libera
+
+  // Rotas públicas
   if (publicRoutes.includes(pathname) || authRoutes.includes(pathname)) {
     return NextResponse.next();
   }
 
-  // Se não houver token → redireciona para login
+  // Sem token → login
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Senão, libera
   return NextResponse.next();
 }
+
 
 // Todas as rotas de páginas
 export const config = {

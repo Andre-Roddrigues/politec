@@ -8,9 +8,9 @@ import {
     ChevronDown, Loader2, Calendar
 } from 'lucide-react';
 import { getCursos, getAreas, getModalidades, getNiveis, type Curso } from '../../lib/cursos-actions';
-import InscreverModal from './InscreverModal';
 import { useRouter } from 'next/navigation';
 import { getCookie } from 'cookies-next';
+import Link from 'next/link';
 
 export default function CursosPolitec() {
     const [cursos, setCursos] = useState<Curso[]>([]);
@@ -464,20 +464,17 @@ function handleInscreverClick(cursoId: string, cursoNome: string) {
                                             <div className={`px-3 py-1 rounded-full text-xs font-medium ${curso.inscricoesAbertas ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}`}>
                                                 {curso.inscricoesAbertas ? 'Inscrições abertas' : 'Inscrições encerradas'}
                                             </div>
-
+                                                <Link href={`/cursos/${curso.id}`}>
                                             <button
-                                                onClick={() => handleInscreverClick(curso.id, curso.titulo)}
-                                                disabled={!curso.inscricoesAbertas}
                                                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${curso.inscricoesAbertas
                                                     ? isAuthenticated
                                                         ? 'bg-gradient-to-r from-blue-600 to-brand-main hover:from-blue-700 hover:to-brand-main/90 text-white shadow-sm hover:shadow hover:scale-105'
                                                         : 'bg-gradient-to-r from-blue-600 to-brand-main hover:from-blue-700 hover:to-brand-main/90 text-white shadow-sm hover:shadow hover:scale-105'
                                                     : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                                                     }`}
-                                            >
-                                                {!isAuthenticated && curso.inscricoesAbertas ? 'Inscrever-se' :
-                                                    curso.inscricoesAbertas ? 'Inscrever-se' : 'Em breve'}
+                                            >Inscrever-se
                                             </button>
+                                            </Link>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -486,20 +483,6 @@ function handleInscreverClick(cursoId: string, cursoNome: string) {
                     )}
                 </motion.div>
             </div>
-
-            {/* Modal de Inscrição - Só renderiza se autenticado */}
-            {isAuthenticated && selectedCurso && (
-                <InscreverModal
-                    isOpen={modalOpen}
-                    onClose={() => {
-                        setModalOpen(false);
-                        setSelectedCurso(null);
-                    }}
-                    cursoId={selectedCurso.id}
-                    cursoNome={selectedCurso.nome}
-
-                />
-            )}
         </div>
     );
 }
