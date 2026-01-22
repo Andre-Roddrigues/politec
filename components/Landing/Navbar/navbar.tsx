@@ -73,6 +73,10 @@ const Navbar = () => {
             <Link href="/cursos" className="hover:text-brand-main">
               Cursos
             </Link>
+            
+            <Link href="/nosso-regulamento" className="hover:text-brand-main">
+              Regulamento
+            </Link>
 
             {isLoggedIn && (
               <Link
