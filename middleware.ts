@@ -28,6 +28,7 @@ export function middleware(req: NextRequest) {
   const publicRoutes = [
     "/",
     "/duvidas",
+    "/nosso-regulamento",
     "/recuperar-senha",
     "/formulario/parceiro",
     "/registro/teste",
