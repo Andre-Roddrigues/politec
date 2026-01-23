@@ -43,7 +43,7 @@ export default function RootLayout({
           <Navbar />
           </div>
           <SidebarProvider>{children}</SidebarProvider>
-          {/* <Footer /> */}
+          <Footer />
         {/* </ThemeProvider> */}
       </body>
       </GoogleOAuthProvider>

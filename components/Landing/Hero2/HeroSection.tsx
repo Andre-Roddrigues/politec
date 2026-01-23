@@ -40,17 +40,17 @@ export default function HeroPolitec() {
             {/* CTA Button */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/cursos">
-              <button className="group bg-gradient-to-r from-brand-main to-brand-main/90 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold hover:from-brand-main/90 hover:to-brand-main transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-brand-main/25 hover:scale-105">
-                <span>Ver Cursos</span>
-                <svg 
-                  className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+                <button className="group bg-gradient-to-r from-brand-main to-brand-main/90 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold hover:from-brand-main/90 hover:to-brand-main transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-brand-main/25 hover:scale-105">
+                  <span>Ver Cursos</span>
+                  <svg 
+                    className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
               </Link>
             </div>
 
@@ -61,9 +61,9 @@ export default function HeroPolitec() {
           {/* Right Content - Image Container */}
           <div className="relative">
             <div className="relative w-full max-w-lg mx-auto">
-              {/* Circle Container with Image */}
-              <div className="relative w-full aspect-square rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
-                {/* Replace this with your actual image path */}
+              {/* Imagem sem círculo - removido o container circular */}
+              <div className="relative w-full aspect-square overflow-hidden ">
+                {/* Imagem principal */}
                 <Image
                   src="/images/heropolitec.png" // Atualize com o caminho da sua imagem
                   alt="POLITEC"
@@ -74,12 +74,14 @@ export default function HeroPolitec() {
                 />
                 
                 {/* Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-main/20 via-transparent to-brand-lime/10"></div>
+                {/* <div className="absolute inset-0 bg-gradient-to-br from-brand-main/20 via-transparent to-brand-lime/10"></div> */}
                 
-                {/* Decorative Rings */}
-                <div className="absolute inset-0 border-2 border-brand-main/20 rounded-full animate-spin-slow"></div>
-                <div className="absolute inset-8 border-2 border-brand-lime/10 rounded-full animate-spin-slow-reverse"></div>
+                {/* Removidos os círculos decorativos */}
               </div>
+              
+              {/* Elementos decorativos adicionais (opcional) */}
+              <div className="absolute -top-4 -right-4 w-32 h-32 bg-brand-lime/5 rounded-full blur-xl"></div>
+              <div className="absolute -bottom-4 -left-4 w-40 h-40 bg-brand-main/5 rounded-full blur-xl"></div>
             </div>
           </div>
         </div>

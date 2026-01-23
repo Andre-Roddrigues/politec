@@ -28,6 +28,7 @@ import {
   Sun,
   Moon,
   AlertCircle,
+  Lock,
 } from "lucide-react";
 import { getCookie } from "cookies-next";
 import { getCursoById } from "../../../lib/cursos-actions";
@@ -650,9 +651,6 @@ export default function CursoDetailPage() {
                       <h3 className="font-semibold text-gray-900 dark:text-white">
                         Pagamento Total
                       </h3>
-                      {/* <p className="text-xs text-brand-main dark:text-brand-lime font-medium">
-                        Economia garantida
-                      </p> */}
                     </div>
                   </div>
 
@@ -664,11 +662,6 @@ export default function CursoDetailPage() {
                           : "0"}
                         <span className="text-base text-gray-500 dark:text-gray-400"> MT</span>
                       </div>
-                      {/* {selectedHorario && (
-                        <div className="text-sm text-gray-500 line-through">
-                          {(getPrecoInscricao() + getPrecoMensalidade() + 200).toLocaleString("pt-MZ")} MT
-                        </div>
-                      )} */}
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {selectedHorario
@@ -706,6 +699,7 @@ export default function CursoDetailPage() {
               </motion.div>
 
               {/* Card Teste Vocacional */}
+              {/* Card Teste Vocacional */}
               <motion.div
                 initial={{ x: 20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -736,53 +730,27 @@ export default function CursoDetailPage() {
                       <span>Aproximadamente 20 minutos</span>
                     </div>
                   </div>
-                  <button
-                    onClick={() => router.push(`/cursos/teste/${cursoId}`)}
-                    className="w-full py-3 bg-gradient-to-r from-brand-main to-brand-lime text-white hover:opacity-90 font-medium rounded-lg transition-all flex items-center justify-center gap-2"
-                  >
-                    <Target className="w-4 h-4" />
-                    Fazer Teste Vocacional
-                  </button>
+
+                  {isAuthenticated ? (
+                    <button
+                      onClick={() => router.push(`/cursos/teste/${cursoId}`)}
+                      className="w-full py-3 bg-gradient-to-r from-brand-main to-brand-lime text-white hover:opacity-90 font-medium rounded-lg transition-all flex items-center justify-center gap-2"
+                    >
+                      <Target className="w-4 h-4" />
+                      Fazer Teste Vocacional
+                    </button>
+                  ) : (
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => router.push("/login")}
+                        className="w-full py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 font-medium rounded-lg transition-colors text-sm"
+                      >
+                        Fazer Login
+                      </button>
+                    </div>
+                  )}
                 </div>
               </motion.div>
-              {/* Benefícios */}
-              {/* <motion.div
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700"
-              >
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-brand-main" />
-                  O que você recebe
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-600 dark:text-gray-300">
-                      Acesso completo ao curso
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-600 dark:text-gray-300">
-                      Material didático incluso
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-600 dark:text-gray-300">
-                      Certificado reconhecido
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-600 dark:text-gray-300">
-                      Suporte durante o curso
-                    </span>
-                  </div>
-                </div>
-              </motion.div> */}
 
               {/* Aviso de Login */}
               {!isAuthenticated && (

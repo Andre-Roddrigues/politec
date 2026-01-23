@@ -16,7 +16,7 @@ import UnitecFooterNew from "./../../../public/images/UnitecFooterNew.png"
 
 export default function Footer() {
   return (
-    <footer id="contacto" className="w-full flex justify-center items-center bg-gradient-to-b from-gray-900 to-gray-800 text-white pt-14">
+    <footer id="contacto" className="w-full flex justify-center items-center bg-brand-main text-white pt-14">
       <div className="mx-auto px-4 w-full max-w-7xl">
         {/* Main footer content */}
         <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-8">
@@ -31,7 +31,7 @@ export default function Footer() {
                 href="https://facebook.com/promet.unitec" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-blue-400 transition-colors duration-300 p-2 rounded-full bg-gray-800 hover:bg-gray-700"
+                className="text-brand-lime hover:text-blue-400 transition-colors duration-300 p-2 rounded-full bg-white  hover:bg-gray-700"
               >
                 <Facebook className="w-5 h-5" />
               </Link>
@@ -40,7 +40,7 @@ export default function Footer() {
                 href="https://instagram.com/promet.unitec" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-pink-400 transition-colors duration-300 p-2 rounded-full bg-gray-800 hover:bg-gray-700"
+                className="text-brand-lime hover:text-pink-400 transition-colors duration-300 p-2 rounded-full bg-white   hover:bg-gray-700"
               >
                 <Instagram className="w-5 h-5" />
               </Link>
@@ -50,7 +50,7 @@ export default function Footer() {
               href="https://tiktok.com/@promet.unitec"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center group transition-all duration-300"
+              className="p-2 rounded-full bg-white  hover:bg-gray-700 flex items-center justify-center group transition-all duration-300"
               aria-label="TikTok"
               title="TikTok"
             >
@@ -63,7 +63,7 @@ export default function Footer() {
               >
                 <path 
                   d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"
-                  className="fill-gray-400 group-hover:fill-[#ff0050] transition-colors duration-300"
+                  className="fill-brand-lime group-hover:fill-[#ff0050] transition-colors duration-300"
                 />
               </svg>
             </Link>
@@ -74,7 +74,7 @@ export default function Footer() {
                 href="https://linkedin.com/company/prometunitec" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-blue-700 transition-colors duration-300 p-2 rounded-full bg-gray-800 hover:bg-gray-700"
+                className="text-brand-lime hover:text-blue-700 transition-colors duration-300 p-2 rounded-full bg-white   hover:bg-gray-700"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M4.98 3.5C4.98 5 3.93 6 2.49 6S0 5 0 3.5 1.05 1 2.49 1s2.49 1 2.49 2.5zM.14 8h4.7v16H.14V8zm7.34 0h4.5v2.5h.06c.62-1.17 2.14-2.4 4.4-2.4 4.7 0 5.56 3.1 5.56 7.12V24h-4.71v-7.95c0-1.9-.03-4.35-2.65-4.35-2.65 0-3.05 2.07-3.05 4.21V24H7.48V8z"/>
@@ -104,20 +104,20 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link 
-                  href="/user/candidaturas" 
+                  href="/user/matriculas" 
                   className="text-gray-400 hover:text-blue-300 transition-colors duration-300 flex items-center py-1"
                 >
                   <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Candidaturas
+                  Matrícula
                 </Link>
               </li>
               <li>
                 <Link 
-                  href="/duvidas" 
+                  href="/nosso-regulamento" 
                   className="text-gray-400 hover:text-blue-300 transition-colors duration-300 flex items-center py-1"
                 >
                   <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Dúvidas
+                  Regulamento
                 </Link>
               </li>
               <li>
@@ -194,15 +194,15 @@ export default function Footer() {
               </li>
               <li className="flex items-center transition-colors duration-300 hover:text-blue-300 text-gray-400">
                 <span className="text-blue-400 mr-3"><Phone className="w-4 h-4" /></span>
-                <span>(+258) 870088787 | 834303184</span>
+                <span>(+258) 829232904 | 834303184</span>
               </li>
               <li className="flex items-center transition-colors duration-300 hover:text-blue-300 text-gray-400">
                 <span className="text-blue-400 mr-3"><Mail className="w-4 h-4" /></span>
-                <span>info@unitec.ac.mz</span>
+                <span>politec@unitec.ac.mz</span>
               </li>
               <li className="flex items-center transition-colors duration-300 hover:text-green-400 text-gray-400">
                   <a 
-                    href="https://wa.me/258834303184" 
+                    href="https://wa.me/258829232904" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center"
@@ -228,7 +228,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="md:hidden flex flex-col items-center mt-8 pt-6 border-t border-gray-700">
           <p className="text-gray-500 text-sm mb-4">
-            &copy; {new Date().getFullYear()} Unitec. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} POLITEC. Todos os direitos reservados.
           </p>
           <div className="flex">
             {/* <PrivacyPolicyModal /> */}
