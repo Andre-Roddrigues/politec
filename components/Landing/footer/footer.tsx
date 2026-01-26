@@ -28,7 +28,7 @@ export default function Footer() {
             <p className="text-gray-300 mb-6">Conectando o Presente ao Futuro.</p>
             <div className="flex space-x-4">
               <Link 
-                href="https://facebook.com/promet.unitec" 
+                href="https://facebook.com/politec.instituto" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-brand-lime hover:text-blue-400 transition-colors duration-300 p-2 rounded-full bg-white  hover:bg-gray-700"
@@ -37,7 +37,7 @@ export default function Footer() {
               </Link>
 
               <Link 
-                href="https://instagram.com/promet.unitec" 
+                href="https://instagram.com/politec.instituto" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-brand-lime hover:text-pink-400 transition-colors duration-300 p-2 rounded-full bg-white   hover:bg-gray-700"
@@ -47,7 +47,7 @@ export default function Footer() {
 
               {/* TikTok */}
               <Link
-              href="https://tiktok.com/@promet.unitec"
+              href="https://tiktok.com/@politec.instituto"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-full bg-white  hover:bg-gray-700 flex items-center justify-center group transition-all duration-300"
@@ -71,7 +71,7 @@ export default function Footer() {
 
               {/* LinkedIn */}
               <Link 
-                href="https://linkedin.com/company/prometunitec" 
+                href="https://linkedin.com/company/politec-instituto" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-brand-lime hover:text-blue-700 transition-colors duration-300 p-2 rounded-full bg-white   hover:bg-gray-700"
