@@ -451,6 +451,9 @@ export default function CursoDetailPage() {
               </div>
             </motion.div>
 
+            {/* Card Teste Vocacional */}
+            
+
             {/* Detalhes do Curso */}
             <motion.div
               variants={fadeInUp}
@@ -674,6 +677,64 @@ export default function CursoDetailPage() {
                       </div>
                     )}
                   </>
+                )}
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl overflow-hidden border border-purple-200 dark:border-purple-800/30"
+            >
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-brand-main to-brand-lime flex items-center justify-center">
+                    <Target className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      Teste Vocacional
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-purple-400">
+                      Descubra sua aptidão
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                    Faça nosso teste para verificar se este curso é adequado para seu perfil e habilidades.
+                  </p>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                    <Clock className="w-3 h-3" />
+                    <span>Aproximadamente 20 minutos</span>
+                  </div>
+                </div>
+
+                {isAuthenticated ? (
+                  <button
+                    onClick={() => router.push(`/cursos/teste/${cursoId}`)}
+                    className="w-full py-3 bg-gradient-to-r from-brand-main to-brand-lime text-white hover:opacity-90 font-medium rounded-lg transition-all flex items-center justify-center gap-2"
+                  >
+                    <Target className="w-4 h-4" />
+                    Fazer Teste Vocacional
+                  </button>
+                ) : (
+                  <div className="space-y-4">
+                    <button
+                      onClick={() => {
+                        // Redirecionar para login com callback para o teste vocacional
+                        router.push(`/login?callback=/cursos/teste/${cursoId}`);
+                      }}
+                      className="w-full py-3 bg-gradient-to-r from-brand-main to-brand-lime text-white hover:opacity-90 font-medium rounded-lg transition-all flex items-center justify-center gap-2"
+                    >
+                      <Target className="w-4 h-4" />
+                      Fazer Teste Vocacional
+                    </button>
+                    <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+                      * É necessário fazer login para acessar o teste
+                    </p>
+                  </div>
                 )}
               </div>
             </motion.div>
