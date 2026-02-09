@@ -6,6 +6,7 @@ import Navbar from '../components/Landing/Navbar/navbar';
 import Footer from '../components/Landing/footer/footer';
 import { Metadata } from 'next';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import PromocoesBanner from '../components/Landing/banner/PromocoesBanner';
 const outfit = Outfit({
   subsets: ["latin"],
 });
@@ -42,6 +43,7 @@ export default function RootLayout({
           <div className="sticky top-0 mb-[60px] z-50 bg-white dark:bg-gray-800 shadow-md">
           <Navbar />
           </div>
+                <PromocoesBanner />
           <SidebarProvider>{children}</SidebarProvider>
           <Footer />
         {/* </ThemeProvider> */}

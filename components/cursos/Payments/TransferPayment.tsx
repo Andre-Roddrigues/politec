@@ -10,7 +10,7 @@ interface TransferPaymentProps {
   itemId: string;
   cursoId: string;
   horarioId: string;
-  itemNome: "inscricao" | "mensalidade" | "curso";
+  itemNome: "inscricao" | "mensalidade" | "curso" | "matricula";
   onSuccess?: () => void;
 }
 

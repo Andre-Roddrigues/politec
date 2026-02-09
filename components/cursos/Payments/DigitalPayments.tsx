@@ -10,7 +10,7 @@ interface DigitalPaymentProps {
   itemId: string;
   cursoId: string;
   horarioId: string;
-  itemNome: "inscricao" | "mensalidade" | "curso";
+  itemNome: "inscricao" | "mensalidade" | "curso" | "matricula";
   valor: number;
   onSuccess?: () => void;
 }
@@ -113,7 +113,7 @@ export default function DigitalPayment({
               value={phone}
               onChange={handlePhoneChange}
               className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 pl-12"
-              placeholder="84 ou 85 seguido de 7 dígitos"
+              placeholder="84 ou 85"
               required
               pattern="(84|85)\d{7}"
               title="Formato: 841234567 ou 851234567 (9 dígitos no total)"

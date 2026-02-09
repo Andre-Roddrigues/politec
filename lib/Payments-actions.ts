@@ -11,14 +11,14 @@ export interface PaymentPayload {
   horarioId: string; // ID do horário
   metodoPagamento: "mpesa" | "emola" | "mKesh" | string;
   phoneNumber: string;
-  itemNome: "inscricao" | "mensalidade" | "curso";
+  itemNome: "inscricao" | "mensalidade" | "curso" | "matricula";
 }
 
 export interface TransferenciaPayload {
   itemId: string; // ID do cursoHorario
   cursoId: string; // ID do curso
   horarioId: string; // ID do horário
-  itemNome: "inscricao" | "mensalidade" | "curso";
+  itemNome: "inscricao" | "mensalidade" | "curso" | "matricula";
   metodoPagamento: "transferencia";
   file: File;
 }

@@ -1,3 +1,4 @@
+// lib/cursos-actions.ts
 'use server';
 
 // Tipos baseados na sua resposta da API
@@ -7,6 +8,7 @@ export type CursoAPI = {
   duracao: string;
   mensalidade: string;
   descricao: string;
+  preco: number;
   createdAt: string;
   updatedAt: string;
 };
@@ -19,7 +21,8 @@ export type Curso = {
   duracao: string;
   nivel: 'Técnico' | 'Superior' | 'Pós-Graduação' | 'Médio';
   area: string;
-  preco: string;
+  preco: number; // Agora é número
+  precoFormatado: string; // Mantém a string formatada
   vagas: number;
   gratuito: boolean;
   modalidade: 'Presencial' | 'Online' | 'Híbrido';
@@ -30,7 +33,7 @@ export type Curso = {
 
 // Configuração da API
 const API_URL = 'https://backend-politec.unitec.ac.mz';
-const API_TIMEOUT = 15000; // Aumentado para 15 segundos
+const API_TIMEOUT = 15000;
 
 // Função auxiliar para fazer requisições
 async function fetchAPI(endpoint: string, options?: RequestInit) {
@@ -40,7 +43,7 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
   try {
     console.log(`[API] Fazendo requisição para: ${API_URL}${endpoint}`);
     
-    const response = await fetch(`https://backend-politec.unitec.ac.mz/cursos`, {
+    const response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
       signal: controller.signal,
       headers: {
@@ -74,6 +77,19 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
   }
 }
 
+// Função para extrair número de uma string de preço
+function extrairPrecoNumero(mensalidade: string): number {
+  if (!mensalidade) return 0;
+  
+  // Remove caracteres não numéricos, mantendo apenas números
+  const numeros = mensalidade.match(/\d+/g);
+  if (!numeros) return 0;
+  
+  // Junta todos os números encontrados
+  const numeroString = numeros.join('');
+  return parseInt(numeroString) || 0;
+}
+
 // Função para detectar nível do curso baseado no nome ou descrição
 function detectarNivel(cursoNome: string): Curso['nivel'] {
   const nomeLower = cursoNome.toLowerCase();
@@ -97,32 +113,44 @@ function detectarNivel(cursoNome: string): Curso['nivel'] {
 function detectarArea(cursoNome: string, descricao: string): string {
   const texto = `${cursoNome} ${descricao}`.toLowerCase();
   
-  if (texto.includes('informática') || texto.includes('computação') || texto.includes('software') || texto.includes('programação')) {
-    return 'Tecnologia';
+  // Tecnologia da Informação
+  if (texto.includes('informática') || texto.includes('computação') || 
+      texto.includes('software') || texto.includes('programação') ||
+      texto.includes('suporte') || texto.includes('web') ||
+      texto.includes('administração de sistemas') || texto.includes('redes')) {
+    return 'Tecnologia da Informação';
   }
   
-  if (texto.includes('construção') || texto.includes('civil') || texto.includes('canalização') || texto.includes('edificação')) {
+  // Gestão & Negócios
+  if (texto.includes('contabilidade') || texto.includes('gestão') || 
+      texto.includes('recursos humanos') || texto.includes('logística') ||
+      texto.includes('geral') || texto.includes('negócios')) {
+    return 'Gestão & Negócios';
+  }
+  
+  // Manutenção Industrial
+  if (texto.includes('elétrica') || texto.includes('electricidade') ||
+      texto.includes('mecânica') || texto.includes('refrigeração') ||
+      texto.includes('climatização') || texto.includes('manutenção')) {
+    return 'Manutenção Industrial';
+  }
+  
+  // Construção Civil
+  if (texto.includes('construção civil') || texto.includes('civil') ||
+      texto.includes('edificação') || texto.includes('engenharia civil')) {
     return 'Construção Civil';
   }
   
-  if (texto.includes('saúde') || texto.includes('enfermagem') || texto.includes('medicina') || texto.includes('fisioterapia')) {
+  // Saúde
+  if (texto.includes('saúde') || texto.includes('enfermagem') || 
+      texto.includes('medicina') || texto.includes('fisioterapia')) {
     return 'Saúde';
   }
   
-  if (texto.includes('administração') || texto.includes('gestão') || texto.includes('contabilidade') || texto.includes('negócios')) {
-    return 'Gestão';
-  }
-  
-  if (texto.includes('educação') || texto.includes('pedagogia') || texto.includes('ensino')) {
+  // Educação
+  if (texto.includes('educação') || texto.includes('pedagogia') || 
+      texto.includes('ensino')) {
     return 'Educação';
-  }
-  
-  if (texto.includes('minas') || texto.includes('geologia') || texto.includes('petróleo')) {
-    return 'Minas e Geologia';
-  }
-  
-  if (texto.includes('eletro') || texto.includes('mecânica') || texto.includes('automóveis')) {
-    return 'Engenharia';
   }
   
   return 'Outras';
@@ -133,12 +161,11 @@ function formatarCursoAPI(cursoAPI: CursoAPI): Curso {
   const nivel = detectarNivel(cursoAPI.nome);
   const area = detectarArea(cursoAPI.nome, cursoAPI.descricao);
   
+  // Extrair valor numérico do preço
+  const precoNumero = cursoAPI.preco || extrairPrecoNumero(cursoAPI.mensalidade);
+  
   // Verifica se é gratuito
-  const mensalidadeLower = cursoAPI.mensalidade.toLowerCase();
-  const mensalidadeNum = parseInt(cursoAPI.mensalidade.replace(/\D/g, ''));
-  const gratuito = mensalidadeNum === 0 || 
-                   mensalidadeLower.includes('gratuito') || 
-                   mensalidadeLower.includes('livre');
+  const gratuito = precoNumero === 0;
   
   // Determinar modalidade baseada na descrição
   const descricaoLower = cursoAPI.descricao.toLowerCase();
@@ -149,20 +176,24 @@ function formatarCursoAPI(cursoAPI: CursoAPI): Curso {
     modalidade = 'Híbrido';
   }
   
-  // Determinar se inscrições estão abertas
-  // Baseado na data de criação e atualização
+  // Determinar se inscrições estão abertas (sempre true para cursos ativos)
   const dataAtual = new Date();
-  const dataCriacao = new Date(cursoAPI.createdAt);
   const dataAtualizacao = new Date(cursoAPI.updatedAt);
-  const mesesDesdeAtualizacao = (dataAtual.getTime() - dataAtualizacao.getTime()) / (1000 * 60 * 60 * 24 * 30);
-  const inscricoesAbertas = mesesDesdeAtualizacao < 6; // Considera cursos atualizados nos últimos 6 meses como ativos
+  const diasDesdeAtualizacao = (dataAtual.getTime() - dataAtualizacao.getTime()) / (1000 * 60 * 60 * 24);
+  const inscricoesAbertas = diasDesdeAtualizacao < 180; // Considera cursos atualizados nos últimos 180 dias
   
-  // Estimar vagas baseado no tipo de curso
-  let vagas = 30; // Valor padrão
-  if (nivel === 'Técnico') vagas = 40;
-  if (nivel === 'Superior') vagas = 35;
-  if (nivel === 'Pós-Graduação') vagas = 25;
-  if (nivel === 'Médio') vagas = 50;
+  // Estimar vagas baseado na área
+  let vagas = 30;
+  if (area === 'Tecnologia da Informação') vagas = 35;
+  if (area === 'Gestão & Negócios') vagas = 40;
+  if (area === 'Manutenção Industrial') vagas = 30;
+  if (area === 'Construção Civil') vagas = 25;
+  
+  // Formatar preço para exibição
+  const precoFormatado = precoNumero.toLocaleString('pt-MZ', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }) + ' MT';
 
   return {
     id: cursoAPI.id,
@@ -171,7 +202,8 @@ function formatarCursoAPI(cursoAPI: CursoAPI): Curso {
     duracao: cursoAPI.duracao,
     nivel,
     area,
-    preco: cursoAPI.mensalidade,
+    preco: precoNumero, // Agora é número
+    precoFormatado, // String formatada para exibição
     vagas,
     gratuito,
     modalidade,
@@ -181,19 +213,21 @@ function formatarCursoAPI(cursoAPI: CursoAPI): Curso {
   };
 }
 
-// Função principal para buscar cursos - SEM MOCK DATA
+// Função principal para buscar cursos
 export async function getCursos(filtros?: {
   nivel?: string;
   area?: string;
   modalidade?: string;
   inscricoesAbertas?: boolean;
   busca?: string;
+  minPreco?: number;
+  maxPreco?: number;
 }): Promise<Curso[]> {
   try {
     console.log('[getCursos] Iniciando busca de cursos da API...');
     
     // Buscar dados da API
-    const cursosAPI: CursoAPI[] = await fetchAPI('https://backend-politec.unitec.ac.mz/cursos');
+    const cursosAPI: CursoAPI[] = await fetchAPI('/cursos');
     
     if (!cursosAPI || cursosAPI.length === 0) {
       console.warn('[getCursos] API retornou array vazio ou nulo');
@@ -204,7 +238,7 @@ export async function getCursos(filtros?: {
     
     // Formatando dados
     const cursosFormatados = cursosAPI.map(curso => {
-      console.log(`[getCursos] Formatando curso: ${curso.nome}`);
+      console.log(`[getCursos] Formatando curso: ${curso.nome} (Preço: ${curso.preco})`);
       return formatarCursoAPI(curso);
     });
     
@@ -231,6 +265,16 @@ export async function getCursos(filtros?: {
       console.log(`[getCursos] Após filtro de inscrições abertas "${filtros.inscricoesAbertas}": ${cursosFiltrados.length} cursos`);
     }
     
+    if (filtros?.minPreco !== undefined) {
+      cursosFiltrados = cursosFiltrados.filter(curso => curso.preco >= filtros.minPreco!);
+      console.log(`[getCursos] Após filtro de preço mínimo "${filtros.minPreco}": ${cursosFiltrados.length} cursos`);
+    }
+    
+    if (filtros?.maxPreco !== undefined) {
+      cursosFiltrados = cursosFiltrados.filter(curso => curso.preco <= filtros.maxPreco!);
+      console.log(`[getCursos] Após filtro de preço máximo "${filtros.maxPreco}": ${cursosFiltrados.length} cursos`);
+    }
+    
     if (filtros?.busca) {
       const buscaLower = filtros.busca.toLowerCase();
       cursosFiltrados = cursosFiltrados.filter(curso =>
@@ -246,9 +290,6 @@ export async function getCursos(filtros?: {
     
   } catch (error) {
     console.error('[getCursos] Erro ao buscar cursos:', error);
-    
-    // RETORNA APENAS ARRAY VAZIO EM CASO DE ERRO - SEM MOCK DATA
-    console.log('[getCursos] Retornando array vazio devido a erro na API');
     return [];
   }
 }
@@ -263,7 +304,7 @@ export async function getAreas(): Promise<string[]> {
     return Array.from(new Set(cursos.map(curso => curso.area))).sort();
   } catch (error) {
     console.error('Erro ao buscar áreas:', error);
-    return []; // Retorna array vazio em vez de mock data
+    return [];
   }
 }
 
@@ -276,7 +317,7 @@ export async function getModalidades(): Promise<string[]> {
     return Array.from(new Set(cursos.map(curso => curso.modalidade))).sort();
   } catch (error) {
     console.error('Erro ao buscar modalidades:', error);
-    return []; // Retorna array vazio em vez de mock data
+    return [];
   }
 }
 
@@ -289,34 +330,120 @@ export async function getNiveis(): Promise<string[]> {
     return Array.from(new Set(cursos.map(curso => curso.nivel))).sort();
   } catch (error) {
     console.error('Erro ao buscar níveis:', error);
-    return []; // Retorna array vazio em vez de mock data
+    return [];
   }
 }
 
 // Função para buscar um curso específico por ID
 export async function getCursoById(id: string): Promise<Curso | null> {
   try {
-    // Tentar buscar diretamente da API primeiro
     console.log(`[getCursoById] Buscando curso com ID: ${id}`);
     
-    // Se a API tiver endpoint específico por ID, use:
-    // const cursoAPI: CursoAPI = await fetchAPI(`/cursos/${id}`);
-    // return formatarCursoAPI(cursoAPI);
+    // Buscar curso específico da API
+    const cursoAPI: CursoAPI = await fetchAPI(`/cursos/${id}`);
     
-    // Como alternativa, buscar todos e filtrar
-    const cursos = await getCursos();
-    const cursoEncontrado = cursos.find(curso => curso.id === id);
-    
-    if (cursoEncontrado) {
-      console.log(`[getCursoById] Curso encontrado: ${cursoEncontrado.titulo}`);
-      return cursoEncontrado;
+    if (!cursoAPI) {
+      console.log(`[getCursoById] Curso com ID ${id} não encontrado`);
+      return null;
     }
     
-    console.log(`[getCursoById] Curso com ID ${id} não encontrado`);
-    return null;
+    const curso = formatarCursoAPI(cursoAPI);
+    console.log(`[getCursoById] Curso encontrado: ${curso.titulo} (Preço: ${curso.preco} MT)`);
+    
+    return curso;
     
   } catch (error) {
     console.error(`Erro ao buscar curso com ID ${id}:`, error);
-    return null; // Retorna null em vez de mock data
+    
+    // Fallback: buscar todos e filtrar
+    try {
+      const cursos = await getCursos();
+      const cursoEncontrado = cursos.find(curso => curso.id === id);
+      
+      if (cursoEncontrado) {
+        console.log(`[getCursoById] Curso encontrado via fallback: ${cursoEncontrado.titulo}`);
+        return cursoEncontrado;
+      }
+    } catch (fallbackError) {
+      console.error('Erro no fallback:', fallbackError);
+    }
+    
+    return null;
+  }
+}
+
+// Função para obter cursos por área
+export async function getCursosPorArea(area: string): Promise<Curso[]> {
+  try {
+    return await getCursos({ area });
+  } catch (error) {
+    console.error(`Erro ao buscar cursos da área ${area}:`, error);
+    return [];
+  }
+}
+
+// Função para obter cursos por preço
+export async function getCursosPorFaixaPreco(min: number, max: number): Promise<Curso[]> {
+  try {
+    return await getCursos({ minPreco: min, maxPreco: max });
+  } catch (error) {
+    console.error(`Erro ao buscar cursos por faixa de preço ${min}-${max}:`, error);
+    return [];
+  }
+}
+
+// Função para obter estatísticas de preços
+export async function getEstatisticasPrecos(): Promise<{
+  media: number;
+  minimo: number;
+  maximo: number;
+  totalCursos: number;
+}> {
+  try {
+    const cursos = await getCursos();
+    
+    if (cursos.length === 0) {
+      return { media: 0, minimo: 0, maximo: 0, totalCursos: 0 };
+    }
+    
+    const precos = cursos.map(curso => curso.preco).filter(preco => preco > 0);
+    
+    if (precos.length === 0) {
+      return { media: 0, minimo: 0, maximo: 0, totalCursos: cursos.length };
+    }
+    
+    const media = precos.reduce((sum, preco) => sum + preco, 0) / precos.length;
+    const minimo = Math.min(...precos);
+    const maximo = Math.max(...precos);
+    
+    return {
+      media: Math.round(media),
+      minimo,
+      maximo,
+      totalCursos: cursos.length,
+    };
+  } catch (error) {
+    console.error('Erro ao calcular estatísticas de preços:', error);
+    return { media: 0, minimo: 0, maximo: 0, totalCursos: 0 };
+  }
+}
+
+// Função para agrupar cursos por preço
+export async function getCursosAgrupadosPorPreco(): Promise<Record<number, Curso[]>> {
+  try {
+    const cursos = await getCursos();
+    const agrupados: Record<number, Curso[]> = {};
+    
+    cursos.forEach(curso => {
+      if (!agrupados[curso.preco]) {
+        agrupados[curso.preco] = [];
+      }
+      agrupados[curso.preco].push(curso);
+    });
+    
+    return agrupados;
+  } catch (error) {
+    console.error('Erro ao agrupar cursos por preço:', error);
+    return {};
   }
 }
