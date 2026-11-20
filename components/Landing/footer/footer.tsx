@@ -8,14 +8,13 @@ import { Mail, MapPin, Phone, Send, ChevronLeft, ChevronRight } from "lucide-rea
 import { usePathname } from "next/navigation";
 
 // Imagens de pagamento (ajusta os caminhos se necessário)
-import mpesaLogo from "@/public/images/payments/Mpesalogo.png";
-import visaLogo from "@/public/images/payments/visalogo.png";
-import masterCardLogo from "@/public/images/payments/masterCardIcon.png";
-import emola from "@/public/images/payments/emolalogo.png";
+import mpesaLogo from "../../../public/images/payments/mpesalogo.png";
+import visaLogo from "../../../public/images/payments/visalogo.png";
+import masterCardLogo from "../../../public/images/payments/masterCardIcon.png";
+import emola from "../../../public/images/payments/emolalogo.png";
+import UnitecFooterNew from "../../../public/images/unitecfooter.png";
+import Politecfooter from "../../../public/images/heropolitec.png";
 import PrivacyPolicyModal from "./politicadeprovacidade";
-
-// Logo do footer antigo (POLITEC)
-import UnitecFooterNew from "@/public/images/UnitecFooterNew.png";
 
 // ---------------------------------------------------------------------------
 // Ícones de redes sociais (SVG inline)
@@ -143,12 +142,12 @@ export default function Footer() {
       </div>
 
       <div className="relative mx-auto px-6 sm:px-10 lg:px-16 pb-8">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-6 lg:gap-12">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5 lg:gap-12">
           {/* Marca */}
           <div className="md:col-span-2 lg:col-span-2">
             <div className="flex items-center gap-3">
               <Image
-                src={UnitecFooterNew}
+                src={Politecfooter}
                 alt="POLITEC"
                 width={104}
               />
@@ -163,14 +162,14 @@ export default function Footer() {
               {paymentLogos.map((method) => (
                 <div
                   key={method.name}
-                  className="bg-white p-1.5 rounded-md flex items-center justify-center h-8 w-12"
+                  className="p-1.5 rounded-md flex items-center justify-center h-10 w-16 bg-white/10"
                   title={method.alt}
                 >
                   <Image
                     src={method.src}
                     alt={method.alt}
-                    width={90}
-                    height={20}
+                    width={120}
+                    height={32}
                     className="object-contain h-full w-full"
                   />
                 </div>
