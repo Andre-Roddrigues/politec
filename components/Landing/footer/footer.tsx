@@ -154,7 +154,9 @@ export default function Footer() {
             </div>
 
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-white/70">
-              Conectando o Presente ao Futuro.
+              O POLITEC é um Instituto Médio Politécnico comprometido com a formação
+              técnica e profissional de excelência, preparando jovens para os desafios
+              do mercado de trabalho e para a construção de um futuro sustentável.
             </p>
 
             {/* Pagamentos */}
@@ -313,10 +315,10 @@ export default function Footer() {
                 href="https://wa.me/258829232904"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-white hover:bg-[#20ba5a] text-[#25D366] font-semibold px-5 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
+                className="w-full sm:w-auto bg-white hover:bg-background/90 text-[#25D366] font-semibold px-5 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
               >
                 <WhatsAppIcon className="w-5 h-5" />
-                Falar no WhatsApp
+                Canal de Ofertas
               </a>
 
               <form
@@ -347,7 +349,7 @@ export default function Footer() {
                 <PrivacyPolicyModal />
               </div>
               <span className="hidden sm:block text-white/20">|</span>
-              <Link href="/termos" className="transition-colors hover:text-white whitespace-nowrap">
+              <Link href="/nossos-termos" className="transition-colors hover:text-white whitespace-nowrap">
                 Termos e Condições
               </Link>
             </div>
