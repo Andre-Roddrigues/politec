@@ -43,7 +43,7 @@ export default function RootLayout({
           <div className="sticky top-0 mb-[60px] z-50 bg-white dark:bg-gray-800 shadow-md">
           <Navbar />
           </div>
-                <PromocoesBanner />
+                {/* <PromocoesBanner /> */}
           <SidebarProvider>{children}</SidebarProvider>
           <Footer />
         {/* </ThemeProvider> */}
