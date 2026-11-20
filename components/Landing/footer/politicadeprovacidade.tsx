@@ -8,6 +8,16 @@ import {
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
+/*  Dados de contacto (confirmar antes de publicar)                    */
+/* ------------------------------------------------------------------ */
+const CONTACTOS = {
+  email: "politec@unitec.ac.mz", // TODO: confirmar email do POLITEC
+  morada: "Av. Salvador Allende Nr. 60, Maputo", // TODO: confirmar morada do POLITEC
+  whatsapp: "83 430 3184", // TODO: confirmar
+  chamadas: "87 008 8787", // TODO: confirmar
+};
+
+/* ------------------------------------------------------------------ */
 /*  Secções da política (fonte única de verdade)                       */
 /* ------------------------------------------------------------------ */
 const SECOES = [
@@ -18,15 +28,14 @@ const SECOES = [
     conteudo: (
       <>
         <p>
-          O <strong>PROMET – Programa de Melhoria de Empregabilidade e Trabalho</strong>,
-          gerido pela Unitec Moçambique, Lda., está comprometido com a proteção
-          e o respeito pela sua privacidade. Esta Política de Privacidade explica
+          O <strong>POLITEC</strong> está comprometido com a proteção e o
+          respeito pela sua privacidade. Esta Política de Privacidade explica
           como recolhemos, usamos, divulgamos e protegemos as suas informações
-          pessoais quando participa no nosso programa, acede ao nosso site{" "}
-          <strong>www.promet.unitec.ac.mz</strong> ou interage connosco.
+          pessoais quando participa nos nossos cursos, acede ao nosso site ou
+          interage connosco.
         </p>
         <p className="mt-3 font-medium text-gray-800">
-          Ao inscrever-se no PROMET ou utilizar os nossos serviços, você concorda
+          Ao inscrever-se no POLITEC ou utilizar os nossos serviços, concorda
           com os termos desta Política de Privacidade.
         </p>
       </>
@@ -39,7 +48,7 @@ const SECOES = [
     conteudo: (
       <>
         <p>
-          Recolhemos as informações que você nos fornece diretamente, incluindo,
+          Recolhemos as informações que nos fornece diretamente, incluindo,
           mas não se limitando a:
         </p>
         <ul>
@@ -61,12 +70,12 @@ const SECOES = [
       <>
         <p>Utilizamos os seus dados pessoais para os seguintes fins:</p>
         <ul>
-          <li>Gerir a sua inscrição e participação no PROMET</li>
-          <li>Processar pagamentos de taxas (ex.: taxa de teste, taxa de formação)</li>
-          <li>Fornecer os serviços do programa, incluindo formação, workshops e emissão de certificados</li>
+          <li>Gerir a sua inscrição e frequência no POLITEC</li>
+          <li>Processar pagamentos de propinas, taxas de matrícula e outros encargos</li>
+          <li>Fornecer os serviços formativos, incluindo aulas, módulos de reforço e emissão de certificados</li>
           <li>Facilitar o encaminhamento para estágios e oportunidades de emprego com <strong>empresas parceiras</strong></li>
-          <li>Comunicar consigo sobre atualizações do programa, eventos ou oportunidades relevantes</li>
-          <li>Garantir a segurança e o bom funcionamento do programa</li>
+          <li>Comunicar consigo sobre atualizações dos cursos, eventos ou oportunidades relevantes</li>
+          <li>Garantir a segurança e o bom funcionamento da instituição</li>
         </ul>
       </>
     ),
@@ -83,11 +92,11 @@ const SECOES = [
         <p className="mt-3">Podemos partilhar as suas informações apenas nas seguintes situações:</p>
         <ul>
           <li>
-            Com <strong>empresas parceiras</strong> do PROMET para fins de recrutamento
-            e seleção de estágios e empregos, conforme explicitado no regulamento.
+            Com <strong>empresas parceiras</strong> do POLITEC para fins de recrutamento
+            e seleção de estágios e empregos, conforme previsto no regulamento.
           </li>
           <li>
-            Com prestadores de serviços que nos auxiliam na operação do programa
+            Com prestadores de serviços que nos apoiam na operação dos cursos
             (ex.: plataforma de pagamentos), sujeitos a obrigações de confidencialidade.
           </li>
           <li>Se exigido por lei ou para proteger os nossos direitos legais.</li>
@@ -101,9 +110,9 @@ const SECOES = [
     titulo: "4. Uso de Imagem",
     conteudo: (
       <p>
-        Ao participar no PROMET, você <strong>autoriza expressamente</strong> a Unitec
-        a utilizar a sua imagem (fotografias, vídeos) em materiais de divulgação
-        do programa, tanto online como offline, sem direito a qualquer remuneração.
+        Ao frequentar o POLITEC, autoriza expressamente a instituição a utilizar
+        a sua imagem (fotografias, vídeos) em materiais de divulgação, tanto
+        online como offline, sem direito a qualquer remuneração.
       </p>
     ),
   },
@@ -125,7 +134,7 @@ const SECOES = [
     titulo: "6. Os Seus Direitos",
     conteudo: (
       <>
-        <p>Você tem o direito de:</p>
+        <p>Tem o direito de:</p>
         <ul>
           <li>Aceder e retificar os seus dados pessoais</li>
           <li>
@@ -134,9 +143,9 @@ const SECOES = [
           </li>
           <li>Opor-se ao tratamento dos seus dados para determinados fins</li>
         </ul>
-        <p className="mt-3 text-sm text-gray-500">
+        <p className="mt-3 text-gray-500">
           Para exercer estes direitos, contacte-nos através dos canais indicados
-          no final desta política.
+          na secção de contactos.
         </p>
       </>
     ),
@@ -148,9 +157,9 @@ const SECOES = [
     conteudo: (
       <p>
         Conservaremos os seus dados pessoais durante o período necessário para
-        cumprir os fins descritos nesta política, incluindo para fins de manutenção
-        da base de talentos e encaminhamento para novas oportunidades, tal como
-        previsto no regulamento do PROMET.
+        cumprir os fins descritos nesta política, incluindo para a manutenção da
+        base de talentos e encaminhamento para novas oportunidades, tal como
+        previsto no regulamento do POLITEC.
       </p>
     ),
   },
@@ -170,7 +179,7 @@ const SECOES = [
     id: "contactos",
     icon: Contact,
     titulo: "9. Contactos",
-    conteudo: null, // renderizado à parte (layout especial)
+    conteudo: null, // renderizado à parte
   },
 ] as const;
 
@@ -184,7 +193,6 @@ export default function PrivacyPolicyModal() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  /* Abrir / fechar */
   const openModal = () => {
     setIsOpen(true);
     document.body.style.overflow = "hidden";
@@ -197,7 +205,7 @@ export default function PrivacyPolicyModal() {
     setTimeout(() => setIsOpen(false), 250);
   }, []);
 
-  /* ESC + focus trap básico */
+  /* ESC + focus trap */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -224,7 +232,7 @@ export default function PrivacyPolicyModal() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [isOpen, closeModal]);
 
-  /* Scroll-spy: destaca secção ativa no índice */
+  /* Scroll-spy */
   useEffect(() => {
     if (!isOpen) return;
     const container = scrollRef.current;
@@ -233,9 +241,7 @@ export default function PrivacyPolicyModal() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
         });
       },
       { root: container, rootMargin: "-20% 0px -70% 0px", threshold: 0 }
@@ -249,7 +255,6 @@ export default function PrivacyPolicyModal() {
     return () => observer.disconnect();
   }, [isOpen]);
 
-  /* Navegar para secção pelo índice */
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     const container = scrollRef.current;
@@ -260,7 +265,6 @@ export default function PrivacyPolicyModal() {
 
   return (
     <>
-      {/* Link no footer */}
       <button
         onClick={openModal}
         className="text-gray-500 hover:text-white text-sm transition-colors duration-300 hover:underline underline-offset-2"
@@ -292,26 +296,23 @@ export default function PrivacyPolicyModal() {
             }`}
           >
             {/* ───── HEADER ───── */}
-            <header className="flex shrink-0 items-start justify-between gap-4 border-b border-gray-200 bg-white px-5 py-4 sm:px-6">
-              <div className="flex items-center gap-3">
+            <header className="flex shrink-0 items-center justify-between gap-4 border-b border-gray-200 bg-white px-5 py-4 sm:px-6">
+              <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-main/10">
                   <Shield className="h-5 w-5 text-brand-main" />
                 </div>
-                <div>
-                  <h2
-                    id="privacy-title"
-                    className="text-lg font-bold text-gray-900 sm:text-xl"
-                  >
+                <div className="min-w-0">
+                  <h2 id="privacy-title" className="text-lg font-bold text-gray-900 sm:text-xl">
                     Política de Privacidade
                   </h2>
-                  <p className="text-xs text-gray-500 sm:text-sm">
-                    PROMET — Programa de Melhoria de Empregabilidade e Trabalho
+                  <p className="truncate text-xs text-gray-500 sm:text-sm">
+                    POLITEC — Instituto de Formação Profissional
                   </p>
                 </div>
               </div>
               <button
                 onClick={closeModal}
-                className="rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                className="shrink-0 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                 aria-label="Fechar"
               >
                 <X className="h-5 w-5" />
@@ -321,11 +322,11 @@ export default function PrivacyPolicyModal() {
             {/* ───── BODY ───── */}
             <div className="flex min-h-0 flex-1">
               {/* Índice lateral — só desktop */}
-              <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-gray-100 bg-gray-50/60 p-4 lg:block">
+              <aside className="hidden w-60 shrink-0 overflow-y-auto border-r border-gray-200 bg-gray-50 p-4 lg:block">
                 <p className="mb-3 px-2 text-[11px] font-bold uppercase tracking-wider text-gray-400">
                   Índice
                 </p>
-                <nav className="space-y-0.5">
+                <nav className="space-y-1">
                   {SECOES.map((s) => {
                     const Icon = s.icon;
                     const active = activeSection === s.id;
@@ -333,17 +334,15 @@ export default function PrivacyPolicyModal() {
                       <button
                         key={s.id}
                         onClick={() => scrollToSection(s.id)}
-                        className={`group flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm transition-colors ${
+                        className={`flex w-full min-w-0 items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                           active
                             ? "bg-brand-main/10 font-semibold text-brand-main"
-                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                            : "text-gray-600 hover:bg-white hover:text-gray-900"
                         }`}
                       >
                         <Icon className="h-4 w-4 shrink-0" />
-                        <span className="line-clamp-1">{s.titulo}</span>
-                        {active && (
-                          <ChevronRight className="ml-auto h-4 w-4 text-brand-main" />
-                        )}
+                        <span className="min-w-0 flex-1 truncate">{s.titulo}</span>
+                        {active && <ChevronRight className="h-4 w-4 shrink-0 text-brand-main" />}
                       </button>
                     );
                   })}
@@ -353,17 +352,17 @@ export default function PrivacyPolicyModal() {
               {/* Conteúdo scrollável */}
               <div
                 ref={scrollRef}
-                className="scrollbar-thin flex-1 overflow-y-auto scroll-smooth px-5 py-6 sm:px-8"
+                className="scrollbar-thin min-w-0 flex-1 overflow-y-auto scroll-smooth bg-gray-50 px-4 py-5 sm:px-6 sm:py-6"
               >
-                {/* Meta info */}
-                <div className="mb-6 rounded-xl border border-brand-main/15 bg-brand-main/5 p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
+                <div className="mx-auto flex w-full max-w-3xl min-w-0 flex-col gap-4">
+                  {/* Meta info */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-main/20 bg-brand-main/5 p-4 sm:p-5">
+                    <div className="min-w-0">
                       <p className="text-sm font-semibold text-brand-main">
                         Última atualização: 02 de outubro de 2025
                       </p>
-                      <p className="mt-0.5 text-xs text-gray-600">
-                        Unitec Moçambique, Lda. • NUIT: 401522050
+                      <p className="mt-0.5 break-words text-xs text-gray-600">
+                        POLITEC • NUIT: 401522050
                       </p>
                     </div>
                     <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-brand-main shadow-sm">
@@ -371,56 +370,54 @@ export default function PrivacyPolicyModal() {
                       Documento Oficial
                     </div>
                   </div>
-                </div>
 
-                {/* Secções */}
-                <div className="space-y-6">
+                  {/* Secções */}
                   {SECOES.map((s) => {
                     const Icon = s.icon;
                     return (
                       <section
                         key={s.id}
                         id={s.id}
-                        className="scroll-mt-4 rounded-xl border border-gray-200 bg-white p-5 transition-shadow hover:shadow-sm"
+                        className="scroll-mt-4 min-w-0 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6"
                       >
-                        <h3 className="mb-3 flex items-center gap-2.5 text-base font-bold text-gray-900 sm:text-lg">
-                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-main/10 text-brand-main">
+                        <h3 className="mb-4 flex items-center gap-3 text-base font-bold text-gray-900 sm:text-lg">
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-main/10 text-brand-main">
                             <Icon className="h-4 w-4" />
                           </span>
-                          {s.titulo}
+                          <span className="min-w-0 break-words">{s.titulo}</span>
                         </h3>
 
-                        <div className="prose-sm max-w-none text-sm leading-relaxed text-gray-600 sm:prose-base [&_ul]:mt-2 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5 [&_strong]:text-gray-800">
+                        <div className="min-w-0 break-words text-sm leading-relaxed text-gray-600 sm:text-[15px] [&_strong]:font-semibold [&_strong]:text-gray-800 [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5 [&_ul]:marker:text-brand-main">
                           {s.id === "contactos" ? (
-                            <div className="space-y-3">
+                            <div className="space-y-4">
                               <p>
                                 Se tiver alguma dúvida sobre esta Política de Privacidade
-                                ou o tratamento dos seus dados pessoais, entre em contacto
-                                connosco:
+                                ou sobre o tratamento dos seus dados pessoais, entre em
+                                contacto connosco:
                               </p>
-                              <div className="grid gap-3 rounded-xl bg-gray-50 p-4 sm:grid-cols-1">
+                              <div className="grid gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
                                 <a
-                                  href="mailto:promet@unitec.ac.mz"
-                                  className="flex items-center gap-3 text-sm text-gray-700 transition-colors hover:text-brand-main"
+                                  href={`mailto:${CONTACTOS.email}`}
+                                  className="flex min-w-0 items-center gap-3 text-sm text-gray-700 transition-colors hover:text-brand-main"
                                 >
-                                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-brand-main shadow-sm">
+                                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-brand-main shadow-sm">
                                     <Mail className="h-4 w-4" />
                                   </span>
-                                  promet@unitec.ac.mz
+                                  <span className="min-w-0 break-all">{CONTACTOS.email}</span>
                                 </a>
-                                <div className="flex items-start gap-3 text-sm text-gray-700">
-                                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-brand-main shadow-sm">
+                                <div className="flex min-w-0 items-start gap-3 text-sm text-gray-700">
+                                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-brand-main shadow-sm">
                                     <MapPin className="h-4 w-4" />
                                   </span>
-                                  Av. Salvador Allende Nr. 60, Maputo
+                                  <span className="min-w-0 break-words pt-2">{CONTACTOS.morada}</span>
                                 </div>
-                                <div className="flex items-start gap-3 text-sm text-gray-700">
-                                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-brand-main shadow-sm">
+                                <div className="flex min-w-0 items-start gap-3 text-sm text-gray-700">
+                                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-brand-main shadow-sm">
                                     <Phone className="h-4 w-4" />
                                   </span>
-                                  <div>
-                                    <div>WhatsApp: 83 430 3184</div>
-                                    <div>Chamadas: 87 008 8787</div>
+                                  <div className="min-w-0 pt-2">
+                                    <div>WhatsApp: {CONTACTOS.whatsapp}</div>
+                                    <div>Chamadas: {CONTACTOS.chamadas}</div>
                                   </div>
                                 </div>
                               </div>
@@ -432,27 +429,22 @@ export default function PrivacyPolicyModal() {
                       </section>
                     );
                   })}
-                </div>
 
-                {/* Aceitação */}
-                <div className="mt-6 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                  <p className="text-sm font-medium text-emerald-800">
-                    Ao utilizar os nossos serviços, você reconhece que leu e
-                    compreendeu esta Política de Privacidade e concorda com os
-                    seus termos.
-                  </p>
+                  {/* Aceitação */}
+                  <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                    <p className="min-w-0 break-words text-sm font-medium leading-relaxed text-emerald-800">
+                      Ao utilizar os nossos serviços, reconhece que leu e compreendeu
+                      esta Política de Privacidade e concorda com os seus termos.
+                    </p>
+                  </div>
                 </div>
-
-                <div className="h-4" />
               </div>
             </div>
 
             {/* ───── FOOTER ───── */}
             <footer className="flex shrink-0 flex-col items-center justify-between gap-3 border-t border-gray-200 bg-white px-5 py-3 sm:flex-row sm:px-6">
-              <p className="text-xs text-gray-500">
-                Unitec Moçambique, Lda. • NUIT: 401522050
-              </p>
+              <p className="text-xs text-gray-500">POLITEC • NUIT: 401522050</p>
               <button
                 onClick={closeModal}
                 className="w-full rounded-lg bg-brand-main px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-main/90 sm:w-auto"
