@@ -7,6 +7,7 @@ import { getMyEnrollments } from "../../../lib/enrollment-actions";
 
 import toast from "react-hot-toast";
 import EnrollmentCard from "../../../components/user/inscricoes/EnrollmentCard";
+import Link from "next/link";
 
 export default function MatriculasPage() {
   const [enrollments, setEnrollments] = useState<any[]>([]);
@@ -59,13 +60,13 @@ export default function MatriculasPage() {
           <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
             Ainda não iniciaste nenhuma inscrição. Explora os cursos e candidata-te para começares a tua jornada.
           </p>
-          <a
+          <Link
             href="/cursos"
             className="inline-flex items-center gap-2 px-6 py-3 bg-brand-main text-white font-medium rounded-xl hover:bg-brand-main/90 transition-colors"
           >
             <BookOpen className="w-5 h-5" />
             Explorar Cursos
-          </a>
+          </Link>
         </div>
       ) : (
         <div className="space-y-12">

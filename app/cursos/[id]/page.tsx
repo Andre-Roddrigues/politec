@@ -100,85 +100,88 @@ export default function CursoDetailPage() {
     horarioId: "",
   });
 
+  // O useEffect agrupa toda a lógica de inicialização
   useEffect(() => {
-    checkAuth();
+    // 1. Verifica Autenticação
+    const token = getCookie("auth_token");
+    setIsAuthenticated(!!token);
+
+    // 2. Carrega os dados do Curso
+    async function loadCurso() {
+      try {
+        const data = await getCursoById(cursoId);
+        setCurso(data);
+      } catch (error) {
+        console.error("Erro ao carregar curso:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // 3. Carrega os Horários
+    async function loadHorarios() {
+      try {
+        setHorariosLoading(true);
+        const data = await getHorarios();
+        setHorarios(data);
+
+        if (data.length > 0) {
+          setSelectedHorario(data[0]);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar horários:", error);
+      } finally {
+        setHorariosLoading(false);
+      }
+    }
+
+    // 4. Carrega os Preços e Descontos
+    async function loadPrecosComDescontos() {
+      try {
+        setPrecosLoading(true);
+
+        const [itensInscricao, itensMatricula] = await Promise.all([
+          getItensFinanceirosPorTipo("inscricao"),
+          getItensFinanceirosPorTipo("matricula"),
+        ]);
+
+        // Inscrição
+        if (itensInscricao.length > 0) {
+          const inscricaoRecente = itensInscricao.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )[0];
+
+          setPrecoInscricao(inscricaoRecente.valor);
+          setDescontoInscricao(inscricaoRecente.descontPercentual);
+          setInscricaoGratuita(isGratuito(inscricaoRecente.descontPercentual));
+        }
+
+        // Matrícula
+        if (itensMatricula.length > 0) {
+          const matriculaRecente = itensMatricula.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )[0];
+
+          setPrecoMatricula(matriculaRecente.valor);
+          setDescontoMatricula(matriculaRecente.descontPercentual);
+          setMatriculaGratuita(isGratuito(matriculaRecente.descontPercentual));
+        }
+      } catch (error) {
+        console.error("Erro ao carregar preços com descontos:", error);
+        setPrecoInscricao(1400);
+        setPrecoMatricula(500);
+      } finally {
+        setPrecosLoading(false);
+      }
+    }
+
+    // Executa todas as chamadas
     loadCurso();
     loadHorarios();
     loadPrecosComDescontos();
-  }, [cursoId]);
-
-  async function loadCurso() {
-    try {
-      const data = await getCursoById(cursoId);
-      setCurso(data);
-    } catch (error) {
-      console.error("Erro ao carregar curso:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function loadHorarios() {
-    try {
-      setHorariosLoading(true);
-      const data = await getHorarios();
-      setHorarios(data);
-
-      if (data.length > 0) {
-        setSelectedHorario(data[0]);
-      }
-    } catch (error) {
-      console.error("Erro ao carregar horários:", error);
-    } finally {
-      setHorariosLoading(false);
-    }
-  }
-
-  async function loadPrecosComDescontos() {
-    try {
-      setPrecosLoading(true);
-
-      const [itensInscricao, itensMatricula] = await Promise.all([
-        getItensFinanceirosPorTipo("inscricao"),
-        getItensFinanceirosPorTipo("matricula"),
-      ]);
-
-      // Inscrição
-      if (itensInscricao.length > 0) {
-        const inscricaoRecente = itensInscricao.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )[0];
-
-        setPrecoInscricao(inscricaoRecente.valor);
-        setDescontoInscricao(inscricaoRecente.descontPercentual);
-        setInscricaoGratuita(isGratuito(inscricaoRecente.descontPercentual));
-      }
-
-      // Matrícula
-      if (itensMatricula.length > 0) {
-        const matriculaRecente = itensMatricula.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )[0];
-
-        setPrecoMatricula(matriculaRecente.valor);
-        setDescontoMatricula(matriculaRecente.descontPercentual);
-        setMatriculaGratuita(isGratuito(matriculaRecente.descontPercentual));
-      }
-    } catch (error) {
-      console.error("Erro ao carregar preços com descontos:", error);
-      setPrecoInscricao(1400);
-      setPrecoMatricula(500);
-    } finally {
-      setPrecosLoading(false);
-    }
-  }
-
-  function checkAuth() {
-    const token = getCookie("auth_token");
-    setIsAuthenticated(!!token);
-  }
+  }, [cursoId]); // O aviso desaparece porque as funções estão dentro do useEffect
 
   const handleOpenPaymentModal = (
     type: "inscricao" | "matricula" | "mensalidade" | "curso"

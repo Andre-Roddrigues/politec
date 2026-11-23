@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import {
@@ -90,6 +90,67 @@ export default function RealizarTeste() {
     carregarTeste();
   }, [idCurso]);
 
+  // Função para finalizar o teste (memorizada com useCallback)
+  const handleFinalizarTeste = useCallback(async () => {
+    // Evita executar se já estiver a submeter ou se o teste já tiver terminado
+    if (submitting || testeFinalizado) return;
+
+    const confirmar = window.confirm(
+      `📊 Status do Teste:\n\n• Respondidas: ${respostas.length}/${questoes.length}\n• Não respondidas: ${questoes.length - respostas.length}\n\nDeseja finalizar o teste agora?${
+        respostas.length < questoes.length
+          ? "\n\n As questões não respondidas serão marcadas como erradas."
+          : ""
+      }`
+    );
+
+    if (!confirmar) return;
+
+    setSubmitting(true);
+
+    try {
+      const dadosEnvio = {
+        testeId: teste?.id || "",
+        respostas: respostas.map((r) => ({
+          questaoId: r.questaoId,
+          opcaoId: r.opcaoId,
+        })),
+      };
+
+      const result = await finalizarTesteAction(dadosEnvio);
+
+      if (result) {
+        toast.success(
+          <div className="text-center">
+            <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-500" />
+            <div className="font-bold text-lg">Teste Enviado! 📤</div>
+            <div className="text-sm">
+              {respostas.length < questoes.length
+                ? `Enviado com ${respostas.length} de ${questoes.length} questões`
+                : "Todas as questões respondidas!"}
+            </div>
+          </div>,
+          { duration: 5000 }
+        );
+
+        const acertos = respostas.filter((resposta) => {
+          const questao = questoes.find((q) => q.id === resposta.questaoId);
+          const opcao = questao?.opcoes.find((o) => o.id === resposta.opcaoId);
+          return opcao?.correcta;
+        }).length;
+
+        setResultado({ acertos, total: questoes.length });
+        setTesteFinalizado(true);
+      } else {
+        toast.error("Erro ao enviar teste. Tente novamente.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Falha ao finalizar teste.");
+    } finally {
+      setSubmitting(false);
+    }
+  }, [respostas, questoes, teste, submitting, testeFinalizado]);
+
   // Timer do teste
   useEffect(() => {
     if (!teste || testeFinalizado) return;
@@ -104,12 +165,12 @@ export default function RealizarTeste() {
 
       if (remainingSeconds <= 0) {
         clearInterval(interval);
-        handleFinalizarTeste();
+        handleFinalizarTeste(); // Chamada segura devido ao useCallback
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [teste, testeFinalizado]);
+  }, [teste, testeFinalizado, handleFinalizarTeste]);
 
   const formatarTempo = (segundos: number) => {
     const minutos = Math.floor(segundos / 60);
@@ -144,64 +205,6 @@ export default function RealizarTeste() {
 
   const irParaQuestao = (index: number) => {
     setQuestaoAtual(index);
-  };
-
-  const handleFinalizarTeste = async () => {
-    const confirmar = window.confirm(
-      `📊 Status do Teste:\n\n• Respondidas: ${respostas.length}/${questoes.length}\n• Não respondidas: ${questoes.length - respostas.length}\n\nDeseja finalizar o teste agora?${
-        respostas.length < questoes.length ? 
-        "\n\n⚠️ As questões não respondidas serão marcadas como erradas." : 
-        ""
-      }`
-    );
-    
-    if (!confirmar) return;
-
-    setSubmitting(true);
-
-    try {
-      const dadosEnvio = {
-        testeId: teste?.id || "",
-        respostas: respostas.map((r) => ({
-          questaoId: r.questaoId,
-          opcaoId: r.opcaoId,
-        })),
-      };
-
-      const result = await finalizarTesteAction(dadosEnvio);
-
-      if (result) {
-        toast.success(
-          <div className="text-center">
-            <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-500" />
-            <div className="font-bold text-lg">Teste Enviado! 📤</div>
-            <div className="text-sm">
-              {respostas.length < questoes.length ? 
-                `Enviado com ${respostas.length} de ${questoes.length} questões` : 
-                "Todas as questões respondidas!"
-              }
-            </div>
-          </div>,
-          { duration: 5000 }
-        );
-
-        const acertos = respostas.filter((resposta) => {
-          const questao = questoes.find((q) => q.id === resposta.questaoId);
-          const opcao = questao?.opcoes.find((o) => o.id === resposta.opcaoId);
-          return opcao?.correcta;
-        }).length;
-
-        setResultado({ acertos, total: questoes.length });
-        setTesteFinalizado(true);
-      } else {
-        toast.error("Erro ao enviar teste. Tente novamente.");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Falha ao finalizar teste.");
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   const getProgresso = () => (questoes.length ? (respostas.length / questoes.length) * 100 : 0);
