@@ -5,18 +5,18 @@ import { useState, useEffect } from "react";
 import DesktopSidebar from "./DesktopSidebar";
 import MobileSidebar from "./MobileSidebar";
 
-export default function Sidebar() {
+interface SidebarProps {
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+}
+
+export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024); // lg breakpoint
-    };
-
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
     checkMobile();
     window.addEventListener("resize", checkMobile);
-    
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
@@ -24,10 +24,5 @@ export default function Sidebar() {
     return <MobileSidebar />;
   }
 
-  return (
-    <DesktopSidebar
-      collapsed={collapsed}
-      onToggleCollapse={() => setCollapsed(!collapsed)}
-    />
-  );
+  return <DesktopSidebar collapsed={collapsed} onToggleCollapse={onToggleCollapse} />;
 }

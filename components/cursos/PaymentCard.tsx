@@ -2,14 +2,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, Gift } from "lucide-react";
 import { 
   calcularValorComDescontoAPICorrigido, 
-  calcularValorComIVA,
   formatarPorcentagemAPI,
   isGratuito 
 } from "../../utils/price-calculations";
-import { Gift } from "lucide-react";
 
 interface PaymentCardProps {
   titulo: string;
@@ -19,7 +17,6 @@ interface PaymentCardProps {
   iconeColor: string;
   valorBase: number;
   descontPercentual: number;
-  ivaPercentual: number;
   tipo: 'inscricao' | 'matricula' | 'mensalidade';
   estaAutenticado: boolean;
   inscricoesAbertas: boolean;
@@ -36,7 +33,6 @@ export default function PaymentCard({
   iconeColor,
   valorBase,
   descontPercentual,
-  ivaPercentual,
   tipo,
   estaAutenticado,
   inscricoesAbertas,
@@ -84,19 +80,16 @@ export default function PaymentCard({
           </div>
         </div>
       );
-    } else {
-      // Sem desconto - mostra apenas o preço original
-      return (
-        <div className="flex flex-col">
-          <span className="text-lg font-bold text-gray-900 dark:text-white">
-            {valorBase.toLocaleString('pt-MZ')} MT
-          </span>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            IVA: {ivaPercentual * 100}%
-          </span>
-        </div>
-      );
-    }
+    } 
+    
+    // Sem desconto - mostra apenas o preço original
+    return (
+      <div className="flex flex-col">
+        <span className="text-lg font-bold text-gray-900 dark:text-white">
+          {valorBase.toLocaleString('pt-MZ')} MT
+        </span>
+      </div>
+    );
   };
 
   const getButtonText = () => {
@@ -143,7 +136,16 @@ export default function PaymentCard({
             <div className="flex items-center justify-center py-4">
               <div className="w-6 h-6 border-2 border-brand-main border-t-transparent rounded-full animate-spin" />
             </div>
-          ) : renderPreco()}
+          ) : (
+            <>
+              {renderPreco()}
+              {!gratuito && (
+                <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-2">
+                  * Valores com IVA incluído
+                </p>
+              )}
+            </>
+          )}
         </div>
 
         {estaAutenticado && inscricoesAbertas ? (

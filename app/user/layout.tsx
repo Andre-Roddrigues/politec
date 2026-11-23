@@ -1,21 +1,26 @@
-import React from "react";
+// app/user/layout.tsx
+"use client";
+
+import { useState } from "react";
 import Sidebar from "../../components/Landing/SideBar/SideBar";
-import { SidebarProvider } from "../../context/SidebarContext";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+export default function UserLayout({ children }: { children: React.ReactNode }) {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <div className="min-h-screen md:flex lg:flex  dark:bg-gray-900">
-      {/* Sidebar fixa à esquerda */}
+    // O container flex faz com que a sidebar e o conteúdo fiquem lado a lado, sem sobreposição.
+    <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-950">
+      
+      {/* A Sidebar fará sticky automaticamente */}
+      <Sidebar collapsed={collapsed} onToggleCollapse={() => setCollapsed(!collapsed)} />
 
-      {/* Conteúdo principal */}
-      <Sidebar />
-      <main className="flex-1 lg:ml-64 transition-all duration-300">
+      {/* O conteúdo ocupa o resto do espaço (flex-1) e nunca fica por baixo da sidebar */}
+      <main className="flex-1 min-w-0 transition-all duration-300">
         <div className="p-4 md:p-6 lg:p-8">
           {children}
         </div>
       </main>
+      
     </div>
   );
-};
-
-export default Layout;
+}

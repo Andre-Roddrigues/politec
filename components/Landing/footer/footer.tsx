@@ -13,7 +13,7 @@ import visaLogo from "../../../public/images/payments/visalogo.png";
 import masterCardLogo from "../../../public/images/payments/masterCardIcon.png";
 import emola from "../../../public/images/payments/emolalogo.png";
 import UnitecFooterNew from "../../../public/images/unitecfooter.png";
-import Politecfooter from "../../../public/images/heropolitec.png";
+import Politecfooter from "../../../public/images/politecfooter.png";
 import PrivacyPolicyModal from "./politicadeprovacidade";
 
 // ---------------------------------------------------------------------------

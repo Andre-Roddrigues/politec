@@ -30,4 +30,10 @@ export const routes = {
   pagamentoscandidato: `${API_BASE_URL}/pagamentos-candidato`,
   adicionarquestao: `${API_BASE_URL}/adicionar-questao`,
   idioma_candidato: `${API_BASE_URL}/idioma-candidato`,
+
+  // POLITEC
+  enrollmentspost: `${API_BASE_URL}/enrollments`,
+  enrollmentsput: `${API_BASE_URL}/enrollments`,
+  enrollmentsget: `${API_BASE_URL}/enrollments/mine`,
+  listarinscricoes: `${API_BASE_URL}/users/listar-inscricoes`,
 };

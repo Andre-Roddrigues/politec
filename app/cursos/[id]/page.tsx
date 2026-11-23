@@ -8,7 +8,6 @@ import {
   BookOpen,
   ArrowLeft,
   Loader2,
-  CheckCircle,
   Globe,
   MapPin,
   Home,
@@ -24,29 +23,22 @@ import {
   Clock,
   Users,
   Tag,
-  Gift,
-  Percent,
 } from "lucide-react";
 import { getCookie } from "cookies-next";
 import { getCursoById } from "../../../lib/cursos-actions";
 import { getHorarios, type Horario } from "../../../lib/get-horario-price";
-import {
-  getItensFinanceirosPorTipo,
-  calcularValorComIVA,
-} from "../../../lib/inscricao-actions";
+import { getItensFinanceirosPorTipo } from "../../../lib/inscricao-actions";
 import PaymentModal from "../../../components/cursos/Payments/PaymentModal";
 
 // Componentes
+import HorarioCard from "../../../components/cursos/HorarioCard";
+import PaymentCard from "../../../components/cursos/PaymentCard";
 
 // Utils
 import {
   calcularValorComDescontoAPICorrigido,
   isGratuito,
-  formatarPorcentagemAPI,
 } from "../../../utils/price-calculations";
-import { getPeriodIcon, formatHora } from "../../../utils/ui-helpers";
-import HorarioCard from "../../../components/cursos/HorarioCard";
-import PaymentCard from "../../../components/cursos/PaymentCard";
 
 // Animações
 const fadeInUp = {
@@ -83,7 +75,6 @@ export default function CursoDetailPage() {
   // Estados para preços
   const [precoInscricao, setPrecoInscricao] = useState<number>(0);
   const [precoMatricula, setPrecoMatricula] = useState<number>(0);
-  const [ivaPercentual, setIvaPercentual] = useState<number>(0.05);
   const [descontoInscricao, setDescontoInscricao] = useState<number>(0);
   const [descontoMatricula, setDescontoMatricula] = useState<number>(0);
   const [inscricaoGratuita, setInscricaoGratuita] = useState<boolean>(false);
@@ -99,7 +90,6 @@ export default function CursoDetailPage() {
     horarioId: string;
     valorBase?: number;
     descontoPercentual?: number;
-    ivaPercentual?: number;
     gratuito?: boolean;
   }>({
     open: false,
@@ -163,10 +153,6 @@ export default function CursoDetailPage() {
         setPrecoInscricao(inscricaoRecente.valor);
         setDescontoInscricao(inscricaoRecente.descontPercentual);
         setInscricaoGratuita(isGratuito(inscricaoRecente.descontPercentual));
-
-        if (inscricaoRecente.iva) {
-          setIvaPercentual(inscricaoRecente.iva);
-        }
       }
 
       // Matrícula
@@ -179,10 +165,6 @@ export default function CursoDetailPage() {
         setPrecoMatricula(matriculaRecente.valor);
         setDescontoMatricula(matriculaRecente.descontPercentual);
         setMatriculaGratuita(isGratuito(matriculaRecente.descontPercentual));
-
-        if (matriculaRecente.iva && matriculaRecente.iva !== ivaPercentual) {
-          setIvaPercentual(matriculaRecente.iva);
-        }
       }
     } catch (error) {
       console.error("Erro ao carregar preços com descontos:", error);
@@ -208,7 +190,6 @@ export default function CursoDetailPage() {
 
     let valorBase = 0;
     let descontoPercentual = 0;
-    let valorComDesconto = 0;
     let valorFinal = 0;
     let gratuito = false;
 
@@ -220,11 +201,10 @@ export default function CursoDetailPage() {
           gratuito = true;
           valorFinal = 0;
         } else {
-          valorComDesconto = calcularValorComDescontoAPICorrigido(
+          valorFinal = calcularValorComDescontoAPICorrigido(
             valorBase,
             descontoPercentual
           );
-          valorFinal = calcularValorComIVA(valorComDesconto, ivaPercentual);
         }
         break;
 
@@ -235,17 +215,16 @@ export default function CursoDetailPage() {
           gratuito = true;
           valorFinal = 0;
         } else {
-          valorComDesconto = calcularValorComDescontoAPICorrigido(
+          valorFinal = calcularValorComDescontoAPICorrigido(
             valorBase,
             descontoPercentual
           );
-          valorFinal = calcularValorComIVA(valorComDesconto, ivaPercentual);
         }
         break;
 
       case "mensalidade":
         valorBase = curso?.preco || 0;
-        valorFinal = calcularValorComIVA(valorBase, ivaPercentual);
+        valorFinal = valorBase;
         break;
 
       case "curso":
@@ -261,13 +240,9 @@ export default function CursoDetailPage() {
               precoMatricula,
               descontoMatricula
             );
-        const valorCursoComIVA = calcularValorComIVA(curso?.preco || 0, ivaPercentual);
 
         valorBase = precoInscricao + precoMatricula + (curso?.preco || 0);
-        valorFinal =
-          calcularValorComIVA(inscricaoComDesconto, ivaPercentual) +
-          calcularValorComIVA(matriculaComDesconto, ivaPercentual) +
-          valorCursoComIVA;
+        valorFinal = inscricaoComDesconto + matriculaComDesconto + (curso?.preco || 0);
         gratuito = isGratuito(descontoInscricao) && isGratuito(descontoMatricula);
         break;
     }
@@ -278,7 +253,6 @@ export default function CursoDetailPage() {
       valor: valorFinal,
       valorBase,
       descontoPercentual,
-      ivaPercentual,
       gratuito,
       itemId: selectedHorario.id,
       cursoId: cursoId,
@@ -286,10 +260,9 @@ export default function CursoDetailPage() {
     });
   };
 
-  // Funções auxiliares para exibição
+  // Funções auxiliares para exibição (já sem IVA)
   const getPrecoFormatado = (valor: number) => {
-    const valorComIVA = calcularValorComIVA(valor, ivaPercentual);
-    return valorComIVA.toLocaleString("pt-MZ", {
+    return valor.toLocaleString("pt-MZ", {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     });
@@ -451,9 +424,6 @@ export default function CursoDetailPage() {
               </div>
             </motion.div>
 
-            {/* Card Teste Vocacional */}
-            
-
             {/* Detalhes do Curso */}
             <motion.div
               variants={fadeInUp}
@@ -502,82 +472,10 @@ export default function CursoDetailPage() {
                       <span className="text-sm">Mensalidade</span>
                     </div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                      {getPrecoFormatado(curso.preco || 0)} MT
+                      {curso.preco || 0} MT
                     </div>
                   </div>
                 </div>
-
-                {/* <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                    * Valores incluem IVA de {ivaPercentual * 100}%
-                  </div>
-
-                  <div className="flex flex-wrap gap-3">
-                    {(inscricaoGratuita || descontoInscricao > 0) && (
-                      <div
-                        className={`px-3 py-2 rounded-lg ${
-                          inscricaoGratuita
-                            ? "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/10 border border-green-200 dark:border-green-800/30"
-                            : "bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-800/20"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <GraduationCap
-                            className={`w-4 h-4 ${
-                              inscricaoGratuita
-                                ? "text-green-600 dark:text-green-400"
-                                : "text-gray-600 dark:text-gray-400"
-                            }`}
-                          />
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Inscrição:
-                          </span>
-                          {inscricaoGratuita ? (
-                            <span className="text-green-600 dark:text-green-400 font-bold text-sm">
-                              GRATUITA
-                            </span>
-                          ) : (
-                            <span className="text-green-600 dark:text-green-400 font-bold text-sm">
-                              -{formatarPorcentagemAPI(descontoInscricao)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {(matriculaGratuita || descontoMatricula > 0) && (
-                      <div
-                        className={`px-3 py-2 rounded-lg ${
-                          matriculaGratuita
-                            ? "bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/10 dark:to-violet-900/10 border border-purple-200 dark:border-purple-800/30"
-                            : "bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-800/20"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <FileText
-                            className={`w-4 h-4 ${
-                              matriculaGratuita
-                                ? "text-purple-600 dark:text-purple-400"
-                                : "text-gray-600 dark:text-gray-400"
-                            }`}
-                          />
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Matrícula:
-                          </span>
-                          {matriculaGratuita ? (
-                            <span className="text-purple-600 dark:text-purple-400 font-bold text-sm">
-                              GRATUITA
-                            </span>
-                          ) : (
-                            <span className="text-purple-600 dark:text-purple-400 font-bold text-sm">
-                              -{formatarPorcentagemAPI(descontoMatricula)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div> */}
               </div>
             </motion.div>
 
@@ -611,75 +509,21 @@ export default function CursoDetailPage() {
                     </p>
                   </div>
                 ) : (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {horarios.map((horario) => (
-                        <HorarioCard
-                          key={horario.id}
-                          horario={horario}
-                          isSelected={selectedHorario?.id === horario.id}
-                          onClick={() => setSelectedHorario(horario)}
-                          // precoInscricao={precoInscricao}
-                          // descontoInscricao={descontoInscricao}
-                          // precoMatricula={precoMatricula}
-                          // descontoMatricula={descontoMatricula}
-                          // precoMensalidade={curso?.preco || 0}
-                          // ivaPercentual={ivaPercentual}
-                        />
-                      ))}
-                    </div>
-
-                    {selectedHorario && !precosLoading && (
-                      <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                          <div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                              Horário selecionado:
-                            </p>
-                            <p className="font-medium text-gray-900 dark:text-white">
-                              {selectedHorario.periodo} •{" "}
-                              {formatHora(selectedHorario.hora)}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                              Resumo dos valores:
-                            </p>
-                            <div className="space-y-1">
-                              <p className="font-semibold text-brand-main dark:text-brand-lime">
-                                Inscrição:{" "}
-                                {inscricaoGratuita
-                                  ? "GRATUITA"
-                                  : `${getPrecoFormatado(
-                                      calcularValorComDescontoAPICorrigido(
-                                        precoInscricao,
-                                        descontoInscricao
-                                      )
-                                    )} MT`}
-                              </p>
-                              <p className="font-semibold text-blue-600 dark:text-blue-400">
-                                Matrícula:{" "}
-                                {matriculaGratuita
-                                  ? "GRATUITA"
-                                  : `${getPrecoFormatado(
-                                      calcularValorComDescontoAPICorrigido(
-                                        precoMatricula,
-                                        descontoMatricula
-                                      )
-                                    )} MT`}
-                              </p>
-                              <p className="font-semibold text-green-600 dark:text-green-400">
-                                Mensal: {getPrecoFormatado(curso?.preco || 0)} MT
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {horarios.map((horario) => (
+                      <HorarioCard
+                        key={horario.id}
+                        horario={horario}
+                        isSelected={selectedHorario?.id === horario.id}
+                        onClick={() => setSelectedHorario(horario)}
+                      />
+                    ))}
+                  </div>
                 )}
               </div>
             </motion.div>
+
+            {/* Teste Vocacional */}
             <motion.div
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -723,7 +567,6 @@ export default function CursoDetailPage() {
                   <div className="space-y-4">
                     <button
                       onClick={() => {
-                        // Redirecionar para login com callback para o teste vocacional
                         router.push(`/login?callback=/cursos/teste/${cursoId}`);
                       }}
                       className="w-full py-3 bg-gradient-to-r from-brand-main to-brand-lime text-white hover:opacity-90 font-medium rounded-lg transition-all flex items-center justify-center gap-2"
@@ -760,7 +603,6 @@ export default function CursoDetailPage() {
                 iconeColor={inscricaoGratuita ? "#10b981" : "#3b82f6"}
                 valorBase={precoInscricao}
                 descontPercentual={descontoInscricao}
-                ivaPercentual={ivaPercentual}
                 tipo="inscricao"
                 estaAutenticado={isAuthenticated}
                 inscricoesAbertas={curso.inscricoesAbertas}
@@ -786,7 +628,6 @@ export default function CursoDetailPage() {
                 iconeColor={matriculaGratuita ? "#10b981" : "#8b5cf6"}
                 valorBase={precoMatricula}
                 descontPercentual={descontoMatricula}
-                ivaPercentual={ivaPercentual}
                 tipo="matricula"
                 estaAutenticado={isAuthenticated}
                 inscricoesAbertas={curso.inscricoesAbertas}
@@ -804,7 +645,6 @@ export default function CursoDetailPage() {
                 iconeColor="#10b981"
                 valorBase={curso?.preco || 0}
                 descontPercentual={0}
-                ivaPercentual={ivaPercentual}
                 tipo="mensalidade"
                 estaAutenticado={isAuthenticated}
                 inscricoesAbertas={curso.inscricoesAbertas}
@@ -911,7 +751,6 @@ export default function CursoDetailPage() {
           valor={paymentModal.valor}
           valorBase={paymentModal.valorBase}
           descontoPercentual={paymentModal.descontoPercentual}
-          ivaPercentual={paymentModal.ivaPercentual}
           gratuito={paymentModal.gratuito}
         />
       )}

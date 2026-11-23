@@ -27,7 +27,7 @@ const FILTROS_INICIAIS: Filtros = {
     nivel: '',
     area: '',
     modalidade: '',
-    inscricoesAbertas: false,
+    inscricoesAbertas: true,
 };
 
 export default function CursosPolitec() {
@@ -127,20 +127,25 @@ export default function CursosPolitec() {
     const clearFilters = useCallback(() => setFiltros(FILTROS_INICIAIS), []);
 
     const handleInscreverClick = useCallback(
-        (cursoId: string, cursoNome: string) => {
-            if (!isAuthenticated) {
-                sessionStorage.setItem('redirectAfterLogin', `/cursos/${cursoId}`);
-                sessionStorage.setItem(
-                    'selectedCurso',
-                    JSON.stringify({ id: cursoId, nome: cursoNome })
-                );
-                router.push('/login');
-                return;
-            }
-            router.push(`/cursos/${cursoId}`);
-        },
-        [isAuthenticated, router]
-    );
+    (cursoId: string, cursoNome: string) => {
+        const token = getCookie('auth_token');
+
+        if (!token) {
+            sessionStorage.setItem('redirectAfterLogin', `/cursos/${cursoId}`);
+            sessionStorage.setItem(
+                'selectedCurso',
+                JSON.stringify({ id: cursoId, nome: cursoNome })
+            );
+            
+            window.location.href = '/login';
+            return;
+        }
+
+        // Se estiver logado, avança normalmente
+        router.push(`/cursos/${cursoId}`);
+    },
+    [router]
+);
 
     function getModalidadeIcon(modalidade: string) {
         switch (modalidade) {
@@ -469,12 +474,7 @@ function CursoCard({
             whileHover={{ y: -6 }}
             className="group relative flex flex-col overflow-hidden rounded-3xl bg-white shadow-md shadow-blue-900/5 ring-1 ring-gray-200/70 transition-shadow duration-300 hover:shadow-2xl hover:shadow-blue-600/10 dark:bg-gray-900 dark:ring-gray-800"
         >
-            {/* Faixa de cor no topo (sólida) */}
-            <div
-                className={`h-1.5 w-full ${
-                    curso.inscricoesAbertas ? 'bg-emerald-400' : 'bg-gray-300 dark:bg-gray-700'
-                }`}
-            />
+           
 
             <div className="flex flex-1 flex-col p-6">
                 <div className="mb-4 flex items-start justify-between gap-3">

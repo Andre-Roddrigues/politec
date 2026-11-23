@@ -1,202 +1,103 @@
 // components/Sidebar/DesktopSidebar.tsx
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  User,
-  BookOpen,
-  FileText,
-  CreditCard,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
-  Home,
-  Settings,
-  Bell,
-} from "lucide-react";
+import { User, BookOpen, FileText, CreditCard, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface DesktopSidebarProps {
   collapsed?: boolean;
   onToggleCollapse?: () => void;
 }
 
+const MENU_ITEMS = [
+  { name: "Perfil", icon: User, path: "/user/perfil" },
+  { name: "Cursos", icon: BookOpen, path: "/user/cursos" },
+  { name: "Matrículas", icon: FileText, path: "/user/matriculas" },
+  { name: "Mensalidades", icon: CreditCard, path: "/user/mensalidades" },
+];
+
 export default function DesktopSidebar({ collapsed = false, onToggleCollapse }: DesktopSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-
-  const menuItems = [
-    {
-      name: "Perfil",
-      icon: User,
-      path: "/user/perfil",
-      color: "text-blue-600",
-      bgColor: "bg-blue-100 dark:bg-blue-900/30",
-    },
-    {
-      name: "Cursos",
-      icon: BookOpen,
-      path: "/user/cursos",
-      color: "text-green-600",
-      bgColor: "bg-green-100 dark:bg-green-900/30",
-    },
-    {
-      name: "Matrículas",
-      icon: FileText,
-      path: "/user/matriculas",
-      color: "text-purple-600",
-      bgColor: "bg-purple-100 dark:bg-purple-900/30",
-    },
-    {
-      name: "Mensalidades",
-      icon: CreditCard,
-      path: "/user/mensalidades",
-      color: "text-orange-600",
-      bgColor: "bg-orange-100 dark:bg-orange-900/30",
-    },
-  ];
 
   const handleLogout = () => {
-    // Aqui você implementaria a lógica de logout
     document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     router.push("/login");
   };
 
   return (
-    <motion.aside
-      initial={{ x: -100, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      className={`h-screen mt-[60px] fixed left-0 top-0 z-40 flex flex-col bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ${
+    // 🔥 AQUI: sticky em vez de fixed. A altura desconta o tamanho da Navbar (ex: 60px ou 64px)
+    <aside
+      className={`sticky top-[64px] z-30 flex h-[calc(100vh-64px)] flex-col border-r border-gray-200 bg-white transition-all duration-300 dark:border-gray-800 dark:bg-gray-900 ${
         collapsed ? "w-20" : "w-64"
       }`}
+      aria-label="Menu principal"
     >
-      {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-        <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
+      {/* Header / Logo */}
+      <div className={`flex h-16 items-center border-b border-gray-200 dark:border-gray-800 px-4 ${collapsed ? "justify-center" : "justify-between"}`}>
+        <Link href="/" className="flex items-center gap-3 overflow-hidden whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-brand-main rounded-lg">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-main">
+            <BookOpen className="h-5 w-5 text-white" />
+          </div>
           {!collapsed && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center gap-3"
-            >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-main to-brand-lime flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="font-bold text-gray-900 dark:text-white text-lg">POLITEC</h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Portal do Estudante</p>
-              </div>
-            </motion.div>
-          )}
-          
-          {collapsed && (
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-main to-brand-lime flex items-center justify-center">
-              <BookOpen className="w-6 h-6 text-white" />
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-gray-900 dark:text-white">POLITEC</span>
+              <span className="text-[11px] text-gray-500 dark:text-gray-400">Portal do Estudante</span>
             </div>
           )}
+        </Link>
 
-          <button
-            onClick={onToggleCollapse}
-            className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-          >
-            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
-        </div>
+        <button
+          onClick={onToggleCollapse}
+          className={`rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-main ${
+            collapsed ? "absolute -right-3 top-5 border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 shadow-sm" : ""
+          }`}
+          aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+        >
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </button>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {menuItems.map((item) => {
+      {/* Navegação */}
+      <nav className="flex-1 space-y-1.5 overflow-y-auto p-3" aria-label="Navegação lateral">
+        {MENU_ITEMS.map((item) => {
           const isActive = pathname === item.path;
           const Icon = item.icon;
-          
+
           return (
-            <Link key={item.path} href={item.path}>
-              <motion.div
-                whileHover={{ scale: 1.02, x: 4 }}
-                whileTap={{ scale: 0.98 }}
-                onHoverStart={() => setHoveredItem(item.path)}
-                onHoverEnd={() => setHoveredItem(null)}
-                className={`relative p-3 rounded-xl flex items-center gap-3 transition-all duration-200 cursor-pointer group ${
-                  isActive
-                    ? `${item.bgColor} ${item.color}`
-                    : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
-                }`}
-              >
-                {/* Indicator de hover */}
-                <AnimatePresence>
-                  {hoveredItem === item.path && !isActive && (
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: 4 }}
-                      exit={{ width: 0 }}
-                      className="absolute -left-2 top-1/2 transform -translate-y-1/2 h-6 bg-gradient-to-b from-brand-main to-brand-lime rounded-r-full"
-                    />
-                  )}
-                </AnimatePresence>
-
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                  isActive 
-                    ? `${item.bgColor} ${item.color}`
-                    : "bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-200 dark:group-hover:bg-gray-700"
-                }`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-
-                {!collapsed && (
-                  <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex-1"
-                  >
-                    <span className={`font-medium text-sm ${isActive ? item.color : ""}`}>
-                      {item.name}
-                    </span>
-                  </motion.div>
-                )}
-
-                {!collapsed && isActive && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-main to-brand-lime"
-                  />
-                )}
-              </motion.div>
+            <Link
+              key={item.path}
+              href={item.path}
+              aria-current={isActive ? "page" : undefined}
+              title={collapsed ? item.name : undefined}
+              className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand-main ${
+                isActive
+                  ? "bg-brand-main/10 text-brand-main dark:bg-brand-main/20 dark:text-brand-main"
+                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              } ${collapsed ? "justify-center" : ""}`}
+            >
+              <Icon className={`h-5 w-5 shrink-0 transition-colors ${isActive ? "text-brand-main" : "text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200"}`} />
+              {!collapsed && <span className="truncate">{item.name}</span>}
+              {isActive && !collapsed && <div className="ml-auto h-1.5 w-1.5 rounded-full bg-brand-main" />}
             </Link>
           );
         })}
       </nav>
 
-      
-
-      {/* Logout Button */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-800">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+      {/* Logout */}
+      <div className="border-t border-gray-200 p-3 dark:border-gray-800">
+        <button
           onClick={handleLogout}
-          className={`w-full p-3 rounded-xl flex items-center gap-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors ${
+          title={collapsed ? "Sair" : undefined}
+          className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 outline-none focus-visible:ring-2 focus-visible:ring-red-500 ${
             collapsed ? "justify-center" : ""
           }`}
         >
-          <div className="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-            <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
-          </div>
-          {!collapsed && (
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="font-medium text-sm"
-            >
-              Sair
-            </motion.span>
-          )}
-        </motion.button>
+          <LogOut className="h-5 w-5 shrink-0 text-red-500 group-hover:text-red-700 dark:group-hover:text-red-300" />
+          {!collapsed && <span>Sair</span>}
+        </button>
       </div>
-    </motion.aside>
+    </aside>
   );
 }

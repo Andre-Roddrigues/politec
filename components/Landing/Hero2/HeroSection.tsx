@@ -68,7 +68,7 @@ export default function HeroPolitec() {
                   src="/images/heropolitec.png" // Atualize com o caminho da sua imagem
                   alt="POLITEC"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   priority
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />

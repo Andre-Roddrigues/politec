@@ -2,6 +2,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { routes } from "../config/routes";
 
 export interface InscricaoCurso {
   id: string;
@@ -40,8 +41,7 @@ export async function getUserCursos(): Promise<InscricaoCurso[]> {
       throw new Error("Token de autenticação não encontrado");
     }
 
-    const response = await fetch(
-      "https://backend-politec.unitec.ac.mz/users/listar-inscricoes",
+    const response = await fetch(routes.listarinscricoes,
       {
         method: "GET",
         headers: {
