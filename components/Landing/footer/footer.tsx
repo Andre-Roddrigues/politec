@@ -8,7 +8,7 @@ import { Mail, MapPin, Phone, Send, ChevronLeft, ChevronRight } from "lucide-rea
 import { usePathname } from "next/navigation";
 
 // Imagens de pagamento (ajusta os caminhos se necessário)
-import mpesaLogo from "../../../public/images/payments/mpesalogo.png";
+import mpesaLogo from "../../../public/images/payments/Mpesa-logo.png";
 import visaLogo from "../../../public/images/payments/visalogo.png";
 import masterCardLogo from "../../../public/images/payments/masterCardIcon.png";
 import emola from "../../../public/images/payments/emolalogo.png";
