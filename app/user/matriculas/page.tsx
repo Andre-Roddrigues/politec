@@ -72,7 +72,6 @@ export default function MatriculasPage() {
         <div className="space-y-12">
           {enrollments.map((enrollment) => (
             <div key={enrollment.id} className="space-y-4">
-              
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-gradient-to-r from-gray-50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-800/20 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-brand-main/20 flex items-center justify-center text-brand-main">
